@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="1"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:id="@+id/linearLayoutActivityDrawingTools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/lightGray">
+
+            <Button
+                android:id="@+id/buttonBitmapActionErase"
+                android:onClick="bitmapActionErase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Erase" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionOverwrite"
+                android:onClick="bitmapActionOverwrite"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Overwrite" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionBlend"
+                android:onClick="bitmapActionBlend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Blend" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionFill"
+                android:onClick="bitmapActionFill"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Fill" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionClear"
+                android:onClick="bitmapActionClear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Clear" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionMirrorHorizontal"
+                android:onClick="bitmapActionMirrorHorizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Hori" />
+
+            <Button
+                android:id="@+id/buttonBitmapActionMirrorVertical"
+                android:onClick="bitmapActionMirrorVertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Vert" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

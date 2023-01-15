@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/redTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/red"
+            android:text="@string/red"/>
+        <SeekBar
+            android:id="@+id/seekBarRed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:max="255"
+            android:progressTint="@color/red"
+            android:thumbTint="@color/red"
+            android:background="@color/darkGray">
+
+        </SeekBar>
+
+        <TextView
+            android:id="@+id/greenTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/green"
+            android:text="@string/green"/>
+        <SeekBar
+            android:id="@+id/seekBarGreen"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:max="255"
+            android:progressTint="@color/green"
+            android:thumbTint="@color/green"
+            android:background="@color/darkGray">
+
+        </SeekBar>
+
+        <TextView
+            android:id="@+id/blueTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/blue"
+            android:text="@string/blue"/>
+        <SeekBar
+            android:id="@+id/seekBarBlue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_margin="15dp"
+            android:max="255"
+            android:progressTint="@color/blue"
+            android:thumbTint="@color/blue"
+            android:background="@color/darkGray">
+
+        </SeekBar>
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="2"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textViewDialogColorRGB"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="@string/color_string_default"/>
+
+        <TextView
+            android:id="@+id/textViewDialogColorHex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:text="@string/hex_string_default"/>
+
+
+        <!--            <EditText-->
+        <!--                android:id="@+id/colorDialogEditText"-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="wrap_content"-->
+        <!--                android:layout_margin="10dp"-->
+        <!--                android:gravity="center"-->
+        <!--                android:layout_centerHorizontal="true"-->
+        <!--                android:layout_below="@+id/colorDialogTextView"-->
+        <!--                android:backgroundTint="@color/white"-->
+        <!--                android:hint="@string/optional_color_name"-->
+        <!--                android:textSize="20sp"/>-->
+
+        <Button
+            android:id="@+id/dialogManagePaletteButtonAccept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:textColor="@color/white"
+            android:text="@string/accept">
+
+        </Button>
+
+        <Button
+            android:id="@+id/dialogManagePaletteButtonCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10sp"
+            android:text="@string/cancel"/>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/dialogPaletteColors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/lightGray">
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

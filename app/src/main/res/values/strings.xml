@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">SpriteSheetsKotlin</string>
+    <string name="app_label">Pixel Art</string>
+    <string name="text_view_menu">Sprite Sheets</string>
+    <string name="button_menu">New</string>
+    <string name="text_view_dialog_project_new">Project Name</string>
+    <string name="button_dialog_project_new_accept">Accept</string>
+    <string name="button_dialog_project_new_cancel">Cancel</string>
+    <string name="dialog_visible_menu_activity">dialogVisible</string>
+    <string name="palette_dialog_visible_drawing_activity">paletteDialogVisible</string>
+    <string name="save_bitmap_dialog_visible_drawing_activity">saveBitmapDialogVisible</string>
+    <string name="red">Red</string>
+    <string name="green">Green</string>
+    <string name="blue">Blue</string>
+    <string name="cancel">Cancel</string>
+    <string name="accept">Accept</string>
+    <string name="color_string_default">rgb(0, 0, 0)</string>
+    <string name="hex_string_default">#000000</string>
+    <string name="button_manage_palette">Palette</string>
+    <string name="button_save_bitmap">Save</string>
+    <string name="button_save_bitmap_cancel">Cancel</string>
+    <string name="write_external_storage_denied">You will not be able to save your images without this permission.</string>
+    <string name="button_confirm_exit_true">Yes</string>
+    <string name="button_confirm_exit_false">No</string>
+    <string name="text_view_confirm_exit">Would you like to close the app?</string>
+</resources>
