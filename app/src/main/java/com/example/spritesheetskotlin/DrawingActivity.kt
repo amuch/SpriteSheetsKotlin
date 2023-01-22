@@ -16,10 +16,7 @@ import com.example.spritesheetskotlin.bitmap.BitmapActionEnum
 import com.example.spritesheetskotlin.bitmap.BitmapManager
 import com.example.spritesheetskotlin.bitmap.BitmapViewModel
 import com.example.spritesheetskotlin.dialog.*
-import com.example.spritesheetskotlin.palette.COLOR_CLEAR
-import com.example.spritesheetskotlin.palette.ColorDrawable
-import com.example.spritesheetskotlin.palette.NAME_CLEAR_COLOR
-import com.example.spritesheetskotlin.palette.Palette
+import com.example.spritesheetskotlin.palette.*
 import kotlin.math.max
 import kotlin.system.exitProcess
 
@@ -107,29 +104,29 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
             BitmapActionEnum.BITMAP_ERASE ->
                 erasePixel(point)
+
+            null -> {}
         }
     }
 
     private fun colorPixel(point: Point) {
-//        bitmapManager.colorPixel(0, point, Color.BLACK)
         val color = drawingViewModel.currentColor.value
+        bitmapManager.colorPixel(0, point, color)
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
-//        drawingViewModel.currentColor.value?.let {
-//            bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution,
-//                it
-//            )
-//        }
+
+        /**  Perhaps a coroutine here to ensue the operation has completed. **/
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     private fun fillColorPartial(point: Point) {
         val color = drawingViewModel.currentColor.value
-        bitmapManager.fillBitmapPartial(drawingViewModel.bitmapMain.value, point, color)
+        bitmapManager.fillBitmapPartial(drawingViewModel.bitmapMain.value, 0, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     private fun erasePixel(point: Point) {
         val color = COLOR_CLEAR
+        bitmapManager.colorPixel(0, point, color)
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
@@ -162,7 +159,8 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
                     drawingViewModel.currentColor.value = Color.argb(alpha, red, green, blue)
 
-                    if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value) {
+                    if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value ||
+                       BitmapActionEnum.BITMAP_FILL == bitmapViewModel.bitmapAction.value) {
                         actionBitmapDefault()
                     }
                 }
@@ -192,6 +190,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun actionBitmapDefault() {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+        setButtonColors()
     }
 
     fun bitmapActionErase(view: View) {
@@ -228,6 +227,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     fun bitmapActionClear(view: View) {
+        bitmapManager.fillBitmap(storageBitmap, COLOR_CLEAR)
         bitmapManager.fillBitmap(drawingViewModel.bitmapMain.value, COLOR_CLEAR)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
@@ -246,24 +246,27 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         val buttonBitmapActionOverwrite = findViewById<Button>(R.id.buttonBitmapActionOverwrite)
         val buttonBitmapActionErase = findViewById<Button>(R.id.buttonBitmapActionErase)
 
-        buttonBitmapActionFill.setBackgroundColor(Color.GRAY)
-        buttonBitmapActionBlend.setBackgroundColor(Color.GRAY)
-        buttonBitmapActionOverwrite.setBackgroundColor(Color.GRAY)
-        buttonBitmapActionErase.setBackgroundColor(Color.GRAY)
+        buttonBitmapActionFill.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        buttonBitmapActionOverwrite.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        buttonBitmapActionErase.setBackgroundColor(COLOR_BUTTON_INACTIVE)
 
         when(bitmapViewModel.bitmapAction.value) {
 
             BitmapActionEnum.BITMAP_FILL ->
-                buttonBitmapActionFill.setBackgroundColor(Color.YELLOW)
+                buttonBitmapActionFill.setBackgroundColor(COLOR_BUTTON_ACTIVE)
 
             BitmapActionEnum.BITMAP_BLEND ->
-                buttonBitmapActionBlend.setBackgroundColor(Color.YELLOW)
+                buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
 
             BitmapActionEnum.BITMAP_OVERWRITE ->
-                buttonBitmapActionOverwrite.setBackgroundColor(Color.YELLOW)
+                buttonBitmapActionOverwrite.setBackgroundColor(COLOR_BUTTON_ACTIVE)
 
             BitmapActionEnum.BITMAP_ERASE ->
-                buttonBitmapActionErase.setBackgroundColor(Color.YELLOW)
+                buttonBitmapActionErase.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+
+            null,
+            BitmapActionEnum.BITMAP_COLOR -> {}
         }
     }
 
@@ -317,5 +320,9 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
         bitmapViewModel = ViewModelProvider(this).get(BitmapViewModel::class.java)
         bitmapViewModel.bitmapAction.observe(this) {}
+        if(null == bitmapViewModel.bitmapAction.value) {
+            bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+        }
+        setButtonColors()
     }
 }

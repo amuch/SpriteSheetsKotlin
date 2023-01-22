@@ -18,15 +18,13 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         return Bitmap.createBitmap(width, height, config)
     }
 
-    fun colorPixel(index: Int, point: Point, color: Int) {
+    fun colorPixel(index: Int, point: Point, color: Int?) {
         val bitmap = bitmapList[index]
-        bitmap.setPixel(point.x, point.y, color)
+        bitmap.setPixel(point.x, point.y, color!!)
     }
 
     fun colorPixel(bitmap: Bitmap?, point: Point, color: Int?) {
-        if (color != null) {
-            bitmap?.setPixel(point.x, point.y, color)
-        }
+            bitmap?.setPixel(point.x, point.y, color!!)
     }
 
     fun fillBitmap(bitmap: Bitmap?, color: Int?) {
@@ -37,20 +35,8 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         }
     }
 
-    fun pointMatchesClear(bitmap: Bitmap?, point: Point) : Boolean {
+    private fun pointMatchesClear(bitmap: Bitmap?, point: Point) : Boolean {
         val color = bitmap!!.getPixel(point.x, point.y)
-        if(Color.red(color) != 0) {
-            println("RED: ${Color.red(color)}")
-            return false
-        }
-        if(Color.green(color) != 0) {
-            println("GREEN: ${Color.green(color)}")
-            return false
-        }
-        if(Color.blue(color) != 0) {
-            println("BLUE: ${Color.blue(color)}")
-            return false
-        }
         if(Color.alpha(color) != 0) {
             println("ALPHA: ${Color.alpha(color)}")
             return false
@@ -59,52 +45,40 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         return true
     }
 
-    fun fillBitmapPartial(bitmap: Bitmap?, point: Point, color: Int?) {
-        val pointsFill = ArrayList<Point>(0)
-
-        if(pointMatchesClear(bitmap!!, point)) {
-//        if(bitmap!!.getPixel(point.x, point.y).toColor().equals(COLOR_CLEAR)) {
-
-//            colorPixel(bitmap, point, color)
-            val resolution: Int = 16
+    fun fillBitmapPartial(bitmap: Bitmap?, index: Int, point: Point, resolution: Int, color: Int?) {
+        val storageBitmap = bitmapList[index]
+        if(pointMatchesClear(storageBitmap, point)) {
+            colorPixel(storageBitmap, point, color)
             projectColor(bitmap, point, resolution, color)
 
-            // Left
-            if(point.x > 0) {
-                val pointLeft = Point(point.x - 1, point.y)
-                if(pointMatchesClear(bitmap, pointLeft)) {
-                    pointsFill.add(pointLeft)
+            val pointLeft = Point(point.x - 1, point.y)
+            if(!(pointLeft.x < 0)) {
+                if(pointMatchesClear(storageBitmap, pointLeft)) {
+                    fillBitmapPartial(bitmap, index, pointLeft, resolution, color)
                 }
             }
-            // Top
-            if(point.y > 0) {
-                val pointTop = Point(point.x, point.y - 1)
-                if(pointMatchesClear(bitmap, pointTop)) {
-                    pointsFill.add(pointTop)
-                }
-            }
-            // Right
-            if(point.x < bitmap.width) {
-                val pointRight = Point(point.x + 1, point.y)
-                if(pointMatchesClear(bitmap, pointRight)) {
-                    pointsFill.add(pointRight)
-                }
-            }
-            // Bottom
-            if(point.y < bitmap.height) {
-                val pointBottom = Point(point.x, point.y + 1)
-                if(pointMatchesClear(bitmap, pointBottom)) {
-                    pointsFill.add(pointBottom)
-                }
-            }
-        }
 
-        if(pointsFill.size > 0) {
-            for (i in 0 until pointsFill.size) {
-                fillBitmapPartial(bitmap, pointsFill.get(i), color)
+            val pointTop = Point(point.x, point.y - 1)
+            if(!(pointTop.y < 0)) {
+                if(pointMatchesClear(storageBitmap, pointTop)) {
+                    fillBitmapPartial(bitmap, index, pointTop, resolution, color)
+                }
+            }
+
+            val pointRight = Point(point.x + 1, point.y)
+            if(pointRight.x < storageBitmap.width) {
+                if(pointMatchesClear(storageBitmap, pointRight)) {
+                    fillBitmapPartial(bitmap, index, pointRight, resolution, color)
+                }
+            }
+
+            val pointBottom = Point(point.x, point.y + 1)
+            if(pointBottom.y < storageBitmap.height) {
+                if(pointMatchesClear(storageBitmap, pointBottom)) {
+                    fillBitmapPartial(bitmap, index, pointBottom, resolution, color)
+                }
             }
         }
-        pointsFill.clear()
     }
 
     fun getStoragePixel(view: View, event: MotionEvent, index: Int): Point {

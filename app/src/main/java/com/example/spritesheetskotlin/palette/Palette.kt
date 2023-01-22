@@ -14,6 +14,8 @@ import com.example.spritesheetskotlin.R
 
 const val NAME_CLEAR_COLOR: String = "clear"
 const val COLOR_CLEAR = 0x00000000
+const val COLOR_BUTTON_ACTIVE = Color.YELLOW
+const val COLOR_BUTTON_INACTIVE = Color.GRAY
 
 class Palette(var dbColorList: ArrayList<DBColor>) {
     constructor() : this(ArrayList<DBColor>(1))
