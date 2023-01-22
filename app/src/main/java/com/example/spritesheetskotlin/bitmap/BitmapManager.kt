@@ -27,6 +27,15 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
             bitmap?.setPixel(point.x, point.y, color!!)
     }
 
+    fun overwritePixel(index: Int, point: Point, color: Int?) {
+        val bitmap = bitmapList[index]
+        bitmap.setPixel(point.x, point.y, color!!)
+    }
+
+    fun overwritePixel(bitmap: Bitmap?, point: Point, color: Int?) {
+        bitmap?.setPixel(point.x, point.y, color!!)
+    }
+
     fun fillBitmap(bitmap: Bitmap?, color: Int?) {
         for(i in 0 until bitmap!!.width) {
             for(j in 0 until bitmap.height) {
