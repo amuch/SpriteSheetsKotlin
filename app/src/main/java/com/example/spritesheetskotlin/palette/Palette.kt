@@ -43,7 +43,6 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
             if((red + green + blue) < (127 * 3)) R.mipmap.palette_white_full else R.mipmap.palette_black_full
         )
         imageButton.setImageBitmap(bitmap)
-
     }
 
     fun createTestPalette() {
@@ -73,8 +72,5 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
 
         val white = DBColor(9, "white", 0xFFFFFF, 1)
         this.dbColorList.add(white)
-
-        val clear = DBColor(10, NAME_CLEAR_COLOR, 0x888888, 1)
-        this.dbColorList.add(clear)
     }
 }

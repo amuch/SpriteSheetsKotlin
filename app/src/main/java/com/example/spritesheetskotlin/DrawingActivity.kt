@@ -93,11 +93,15 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private fun performDrawingAction(point: Point) {
         println("$point, ${bitmapViewModel.bitmapAction.value}")
         when (bitmapViewModel.bitmapAction.value) {
+            BitmapActionEnum.BITMAP_OVERWRITE ->
+                colorPixel(point)
 
             BitmapActionEnum.BITMAP_BLEND,
-            BitmapActionEnum.BITMAP_OVERWRITE,
-            BitmapActionEnum.BITMAP_COLOR ->
-                colorPixel(point)
+            BitmapActionEnum.BITMAP_COLOR -> {
+                if(bitmapManager.pointHasZeroAlpha(0, point)) {
+                    colorPixel(point)
+                }
+            }
 
             BitmapActionEnum.BITMAP_FILL ->
                 fillColorPartial(point)
@@ -152,17 +156,11 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     val red = Color.red(palette.dbColorList[i].color)
                     val green = Color.green(palette.dbColorList[i].color)
                     val blue = Color.blue(palette.dbColorList[i].color)
-                    val alpha = when (palette.dbColorList[i].name) {
-                        NAME_CLEAR_COLOR -> 0
-                        else -> 0xFF
-                    }
+                    val alpha = 0xFF
 
                     drawingViewModel.currentColor.value = Color.argb(alpha, red, green, blue)
 
-                    if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value ||
-                       BitmapActionEnum.BITMAP_FILL == bitmapViewModel.bitmapAction.value) {
-                        actionBitmapDefault()
-                    }
+                    actionBitmapDefault()
                 }
             }
             linearLayoutPalette.addView(imageButton)
@@ -300,7 +298,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
         imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
         drawingViewModel.currentColor.observe(this) {
-//            Palette().colorButton(it, imageButtonManagePalette)
             Palette().colorImageButton(it, imageButtonManagePalette, resources)
         }
 
