@@ -23,4 +23,5 @@
     <string name="button_confirm_exit_true">Yes</string>
     <string name="button_confirm_exit_false">No</string>
     <string name="text_view_confirm_exit">Would you like to close the app?</string>
+    <string name="text_view_confirm_clear">Clear the image?</string>
 </resources>

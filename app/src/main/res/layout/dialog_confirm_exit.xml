@@ -36,6 +36,4 @@
             android:textSize="20sp"
             android:text="@string/button_confirm_exit_false" />
 
-
-
 </RelativeLayout>

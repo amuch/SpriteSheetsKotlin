@@ -58,7 +58,10 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     override fun onSaveInstanceState(bundle: Bundle) {
         super.onSaveInstanceState(bundle)
-        dialogManager.closeDialogs()
+
+        if(dialogViewModel.dialogVisible.value == DialogVisibleEnum.DIALOG_NONE) {
+            dialogManager.closeDialogs()
+        }
     }
 
     override fun onRestoreInstanceState(bundle: Bundle) {
@@ -91,7 +94,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     private fun performDrawingAction(point: Point) {
-        println("$point, ${bitmapViewModel.bitmapAction.value}")
         when (bitmapViewModel.bitmapAction.value) {
             BitmapActionEnum.BITMAP_OVERWRITE ->
                 colorPixel(point)
@@ -118,7 +120,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         bitmapManager.colorPixel(0, point, color)
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
 
-        /**  Perhaps a coroutine here to ensue the operation has completed. **/
+        /**  Perhaps a coroutine here to ensure the operation has completed. **/
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
@@ -225,6 +227,11 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     fun bitmapActionClear(view: View) {
+        dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_CONFIRM_CLEAR
+        showDialog()
+    }
+
+    fun clearBitmap() {
         bitmapManager.fillBitmap(storageBitmap, COLOR_CLEAR)
         bitmapManager.fillBitmap(drawingViewModel.bitmapMain.value, COLOR_CLEAR)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
