@@ -31,16 +31,18 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     var bitmapManager = BitmapManager()
     lateinit var bitmapViewModel: BitmapViewModel
     lateinit var dialogManager : DialogManager
-//    var mainBitmap: Bitmap = bitmapManager.createBitmap(spriteWidth * resolution, spriteHeight * resolution)
-    var storageBitmap: Bitmap = bitmapManager.createBitmap(spriteWidth, spriteHeight)
 
     lateinit var palette: Palette
 //    lateinit var colors: ArrayList<DBColor>
     private lateinit var linearLayoutPalette: LinearLayout
 //    private lateinit var buttonManagePalette: Button
     private lateinit var imageButtonManagePalette: ImageButton
+    private lateinit var imageButtonBitmapActionFill: ImageButton
 
     companion object {
+
+        var mirrorHorizontal: Boolean = false
+        var mirrorVertical: Boolean = false
 
         fun closeApplication() {
             exitProcess(0)
@@ -74,13 +76,17 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         showDialog()
     }
 
+    private fun showDialog() {
+        dialogManager.showDialog(dialogViewModel)
+    }
+
     /** Drawing methods **/
     override fun onTouch(view: View?, motionEvent: MotionEvent?): Boolean {
         when(view) {
             imageViewMain -> when(motionEvent?.action) {
                 MotionEvent.ACTION_DOWN,
                 MotionEvent.ACTION_MOVE -> {
-                    val point = bitmapManager.getStoragePixel(imageViewMain, motionEvent, 0)
+                    val point = bitmapManager.getStoragePixel(imageViewMain, motionEvent, bitmapManager.indexCurrent)
                     performDrawingAction(point)
                     return true
                 }
@@ -94,22 +100,82 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     private fun performDrawingAction(point: Point) {
+        val width = drawingViewModel.bitmapStorage.value!!.width
+        val horizontalMirror = Point(width - point.x - 1, point.y)
+
+        val height = drawingViewModel.bitmapStorage.value!!.height
+        val verticalMirror = Point(point.x, height - point.y - 1)
+
+        val mirrorBoth = mirrorHorizontal && mirrorVertical
+        val doubleMirror = Point(width - point.x - 1, height - point.y - 1)
+
         when (bitmapViewModel.bitmapAction.value) {
-            BitmapActionEnum.BITMAP_OVERWRITE ->
+            BitmapActionEnum.BITMAP_OVERWRITE -> {
                 colorPixel(point)
 
-            BitmapActionEnum.BITMAP_BLEND,
-            BitmapActionEnum.BITMAP_COLOR -> {
-                if(bitmapManager.pointHasZeroAlpha(0, point)) {
-                    colorPixel(point)
+                if(mirrorHorizontal) {
+                    colorPixel(horizontalMirror)
+                }
+
+                if(mirrorVertical) {
+                    colorPixel(verticalMirror)
+                }
+
+                if(mirrorBoth) {
+                    colorPixel(doubleMirror)
                 }
             }
 
-            BitmapActionEnum.BITMAP_FILL ->
+            BitmapActionEnum.BITMAP_BLEND,
+            BitmapActionEnum.BITMAP_COLOR -> {
+                if(bitmapManager.pointHasZeroAlpha(bitmapManager.indexCurrent, point)) {
+                    colorPixel(point)
+
+                    if(mirrorHorizontal) {
+                        colorPixel(horizontalMirror)
+                    }
+
+                    if(mirrorVertical) {
+                        colorPixel(verticalMirror)
+                    }
+
+                    if(mirrorBoth) {
+                        colorPixel(doubleMirror)
+                    }
+                }
+            }
+
+            BitmapActionEnum.BITMAP_FILL -> {
                 fillColorPartial(point)
 
-            BitmapActionEnum.BITMAP_ERASE ->
+                if(mirrorHorizontal) {
+                    fillColorPartial(horizontalMirror)
+                }
+
+                if(mirrorVertical) {
+                    fillColorPartial(verticalMirror)
+                }
+
+                if(mirrorBoth) {
+                    fillColorPartial(doubleMirror)
+                }
+            }
+
+            BitmapActionEnum.BITMAP_ERASE -> {
                 erasePixel(point)
+
+                if(mirrorHorizontal) {
+                    erasePixel(horizontalMirror)
+                }
+
+                if(mirrorVertical) {
+                    erasePixel(verticalMirror)
+                }
+
+                if(mirrorBoth) {
+                    erasePixel(doubleMirror)
+                }
+            }
 
             null -> {}
         }
@@ -117,7 +183,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun colorPixel(point: Point) {
         val color = drawingViewModel.currentColor.value
-        bitmapManager.colorPixel(0, point, color)
+        bitmapManager.colorPixel(bitmapManager.indexCurrent, point, color)
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
 
         /**  Perhaps a coroutine here to ensure the operation has completed. **/
@@ -126,13 +192,13 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun fillColorPartial(point: Point) {
         val color = drawingViewModel.currentColor.value
-        bitmapManager.fillBitmapPartial(drawingViewModel.bitmapMain.value, 0, point, resolution, color)
+        bitmapManager.fillBitmapPartial(drawingViewModel.bitmapMain.value, bitmapManager.indexCurrent, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     private fun erasePixel(point: Point) {
         val color = COLOR_CLEAR
-        bitmapManager.colorPixel(0, point, color)
+        bitmapManager.colorPixel(bitmapManager.indexCurrent, point, color)
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
@@ -184,10 +250,14 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         showDialog()
     }
 
-    private fun showDialog() {
-        dialogManager.showDialog(dialogViewModel)
+    /** Frame functionality **/
+    fun dialogManageFrame(view: View) {
+        println("Manage Frame")
     }
 
+
+
+    /** Bitmap functionality **/
     private fun actionBitmapDefault() {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
         setButtonColors()
@@ -232,26 +302,28 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     fun clearBitmap() {
-        bitmapManager.fillBitmap(storageBitmap, COLOR_CLEAR)
+        bitmapManager.fillBitmap(drawingViewModel.bitmapStorage.value, COLOR_CLEAR)
         bitmapManager.fillBitmap(drawingViewModel.bitmapMain.value, COLOR_CLEAR)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     fun bitmapActionMirrorHorizontal(view: View) {
-        println("Horizontal Mirror")
+        mirrorHorizontal = !mirrorHorizontal
+        setButtonColors()
     }
 
     fun bitmapActionMirrorVertical(view: View) {
-        println("Vertical Mirror")
+        mirrorVertical = !mirrorVertical
+        setButtonColors()
     }
 
     private fun setButtonColors() {
-        val buttonBitmapActionFill = findViewById<Button>(R.id.buttonBitmapActionFill)
         val buttonBitmapActionBlend = findViewById<Button>(R.id.buttonBitmapActionBlend)
         val buttonBitmapActionOverwrite = findViewById<Button>(R.id.buttonBitmapActionOverwrite)
         val buttonBitmapActionErase = findViewById<Button>(R.id.buttonBitmapActionErase)
 
-        buttonBitmapActionFill.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        imageButtonBitmapActionFill.setBackgroundColor(COLOR_CLEAR)
+
         buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
         buttonBitmapActionOverwrite.setBackgroundColor(COLOR_BUTTON_INACTIVE)
         buttonBitmapActionErase.setBackgroundColor(COLOR_BUTTON_INACTIVE)
@@ -259,7 +331,9 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         when(bitmapViewModel.bitmapAction.value) {
 
             BitmapActionEnum.BITMAP_FILL ->
-                buttonBitmapActionFill.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+                drawingViewModel.currentColor.value?.let {
+                    imageButtonBitmapActionFill.setBackgroundColor(it)
+                }
 
             BitmapActionEnum.BITMAP_BLEND ->
                 buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
@@ -272,6 +346,18 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
             null,
             BitmapActionEnum.BITMAP_COLOR -> {}
+        }
+
+        val buttonBitmapActionMirrorHorizontal = findViewById<Button>(R.id.buttonBitmapActionMirrorHorizontal)
+        buttonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        if(mirrorHorizontal) {
+            buttonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+        }
+
+        val buttonBitmapActionMirrorVertical = findViewById<Button>(R.id.buttonBitmapActionMirrorVertical)
+        buttonBitmapActionMirrorVertical.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        if(mirrorVertical) {
+            buttonBitmapActionMirrorVertical.setBackgroundColor(COLOR_BUTTON_ACTIVE)
         }
     }
 
@@ -303,12 +389,22 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
             setImageView(imageViewMain, it)
         }
 
+        drawingViewModel.bitmapStorage.observe(this) { }
+
+        bitmapViewModel = ViewModelProvider(this).get(BitmapViewModel::class.java)
+        bitmapViewModel.bitmapAction.observe(this) {}
+        if(null == bitmapViewModel.bitmapAction.value) {
+            bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+        }
+
+        imageButtonBitmapActionFill = findViewById<ImageButton>(R.id.imageButtonBitmapActionFill)
+
         imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
         drawingViewModel.currentColor.observe(this) {
             Palette().colorImageButton(it, imageButtonManagePalette, resources)
         }
 
-        bitmapManager.bitmapList.add(storageBitmap)
+        drawingViewModel.bitmapStorage.value?.let { bitmapManager.bitmapList.add(it) }
 
         val test: TextView = findViewById(R.id.textViewProjectTitle)
         test.text = projectName
@@ -322,11 +418,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)
         dialogViewModel.dialogVisible.observe(this) {}
 
-        bitmapViewModel = ViewModelProvider(this).get(BitmapViewModel::class.java)
-        bitmapViewModel.bitmapAction.observe(this) {}
-        if(null == bitmapViewModel.bitmapAction.value) {
-            bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
-        }
+
         setButtonColors()
     }
 }

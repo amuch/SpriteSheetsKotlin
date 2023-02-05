@@ -3,6 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
+    android:background="@drawable/gradient_background_draw"
     android:orientation="horizontal">
+
+    <ImageButton
+        android:id="@+id/buttonManageFrame"
+        android:onClick="dialogManageFrame"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:backgroundTint="@android:color/transparent"
+        android:src="@mipmap/frame"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center" />
+
+    <HorizontalScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutViewFrame"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:background="@color/lightGray">
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </LinearLayout>

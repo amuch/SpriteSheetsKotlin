@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
+    android:background="@drawable/gradient_background_draw"
     android:orientation="horizontal">
 
     <HorizontalScrollView
@@ -13,8 +14,7 @@
             android:id="@+id/linearLayoutActivityDrawingTools"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@color/lightGray">
+            android:orientation="horizontal">
 
             <Button
                 android:id="@+id/buttonBitmapActionErase"
@@ -46,15 +46,26 @@
                 android:gravity="center"
                 android:text="Blend" />
 
-            <Button
-                android:id="@+id/buttonBitmapActionFill"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionFill"-->
+<!--                android:onClick="bitmapActionFill"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Fill" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionFill"
                 android:onClick="bitmapActionFill"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/fill"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Fill" />
+                android:padding="0dp" />
 
             <Button
                 android:id="@+id/buttonBitmapActionClear"

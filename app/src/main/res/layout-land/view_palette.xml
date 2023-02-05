@@ -3,6 +3,7 @@
     android:layout_width="0dp"
     android:layout_height="match_parent"
     android:layout_weight="1"
+    android:background="@drawable/gradient_background_draw"
     android:orientation="vertical">
 
     <ScrollView
@@ -14,8 +15,7 @@
             android:id="@+id/linearLayoutActivityDrawing"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@color/lightGray">
+            android:orientation="vertical">
 
         </LinearLayout>
     </ScrollView>

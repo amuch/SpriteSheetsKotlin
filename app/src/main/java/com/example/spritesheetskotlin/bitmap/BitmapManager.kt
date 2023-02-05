@@ -9,6 +9,7 @@ import kotlin.math.roundToInt
 
 class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
     constructor() : this(ArrayList<Bitmap>(1))
+    var indexCurrent: Int = 0
 
     fun createBitmap(width: Int, height: Int) : Bitmap {
         val config = Bitmap.Config.ARGB_8888

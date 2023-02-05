@@ -3,30 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
+    android:background="@drawable/gradient_background_draw"
     android:orientation="horizontal">
-
-    <HorizontalScrollView
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1">
-
-        <LinearLayout
-            android:id="@+id/linearLayoutActivityDrawing"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:background="@color/lightGray">
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
-<!--    <Button-->
-<!--        android:id="@+id/buttonManagePalette"-->
-<!--        android:onClick="dialogManagePalette"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:textSize="16sp"-->
-<!--        android:text="@string/button_manage_palette" />-->
 
     <ImageButton
         android:id="@+id/buttonManagePalette"
@@ -38,5 +16,19 @@
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:layout_marginHorizontal="2dp" />
+
+    <HorizontalScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutActivityDrawing"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal" >
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </LinearLayout>

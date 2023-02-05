@@ -11,6 +11,10 @@
     <color name="green">#FF00FF00</color>
     <color name="blue">#FF0000FF</color>
     <color name="lightGray">#D3D3D3</color>
-    <color name="darkGray">#A9A9A9</color>
+    <color name="darkGray">#444444</color>
     <color name="translucent">#00000000</color>
+    <color name="IndependenceBlue">#4C516D</color>
+    <color name="SteelBlue">#4682B4</color>
+    <color name="AliceBlue">#F0F8FF</color>
+    <color name="StormBlue">#5078A3</color>
 </resources>
