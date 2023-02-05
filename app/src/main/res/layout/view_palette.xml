@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
-    android:background="@drawable/gradient_background_draw"
+    android:background="@color/lightGray"
     android:orientation="horizontal">
 
     <ImageButton
@@ -15,7 +15,7 @@
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
-        android:layout_marginHorizontal="2dp" />
+        android:padding="0dp" />
 
     <HorizontalScrollView
         android:layout_width="0dp"

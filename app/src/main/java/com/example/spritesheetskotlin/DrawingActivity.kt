@@ -2,6 +2,7 @@ package com.example.spritesheetskotlin
 
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Point
 import androidx.appcompat.app.AppCompatActivity
@@ -38,6 +39,11 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 //    private lateinit var buttonManagePalette: Button
     private lateinit var imageButtonManagePalette: ImageButton
     private lateinit var imageButtonBitmapActionFill: ImageButton
+    private lateinit var imageButtonBitmapActionErase: ImageButton
+    private lateinit var imageButtonBitmapActionClear: ImageButton
+    private lateinit var imageButtonBitmapActionOverwrite: ImageButton
+    private lateinit var imageButtonBitmapActionMirrorHorizontal: ImageButton
+    private lateinit var imageButtonBitmapActionMirrorVertical: ImageButton
 
     companion object {
 
@@ -266,15 +272,18 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     fun bitmapActionErase(view: View) {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_ERASE
         /** Set palette to eraser image **/
+        val bitmapEraser: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.erase)
+        imageButtonManagePalette.setBackgroundColor(COLOR_CLEAR)
+        imageButtonManagePalette.setImageBitmap(bitmapEraser)
         setButtonColors()
     }
 
     fun bitmapActionOverwrite(view: View) {
-        bitmapViewModel.bitmapAction.value =
-            when (BitmapActionEnum.BITMAP_OVERWRITE) {
-                bitmapViewModel.bitmapAction.value -> BitmapActionEnum.BITMAP_COLOR
-            else -> BitmapActionEnum.BITMAP_OVERWRITE
-        }
+        bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_OVERWRITE
+        /** Set palette to overwrite image **/
+        val bitmapOverwrite: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.overwrite)
+//        imageButtonManagePalette.setBackgroundColor(COLOR_CLEAR)
+        imageButtonManagePalette.setImageBitmap(bitmapOverwrite)
         setButtonColors()
     }
 
@@ -319,14 +328,12 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun setButtonColors() {
         val buttonBitmapActionBlend = findViewById<Button>(R.id.buttonBitmapActionBlend)
-        val buttonBitmapActionOverwrite = findViewById<Button>(R.id.buttonBitmapActionOverwrite)
-        val buttonBitmapActionErase = findViewById<Button>(R.id.buttonBitmapActionErase)
+
 
         imageButtonBitmapActionFill.setBackgroundColor(COLOR_CLEAR)
+        imageButtonBitmapActionErase.setBackgroundColor(COLOR_CLEAR)
 
         buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
-        buttonBitmapActionOverwrite.setBackgroundColor(COLOR_BUTTON_INACTIVE)
-        buttonBitmapActionErase.setBackgroundColor(COLOR_BUTTON_INACTIVE)
 
         when(bitmapViewModel.bitmapAction.value) {
 
@@ -338,26 +345,23 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
             BitmapActionEnum.BITMAP_BLEND ->
                 buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
 
-            BitmapActionEnum.BITMAP_OVERWRITE ->
-                buttonBitmapActionOverwrite.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            BitmapActionEnum.BITMAP_OVERWRITE -> {} //bitmapActionOverwrite
 
-            BitmapActionEnum.BITMAP_ERASE ->
-                buttonBitmapActionErase.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            BitmapActionEnum.BITMAP_ERASE -> {} //imageButtonBitmapActionErase
 
             null,
             BitmapActionEnum.BITMAP_COLOR -> {}
         }
 
-        val buttonBitmapActionMirrorHorizontal = findViewById<Button>(R.id.buttonBitmapActionMirrorHorizontal)
-        buttonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+        imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_CLEAR)
         if(mirrorHorizontal) {
-            buttonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(drawingViewModel.currentColor.value!!)
         }
 
-        val buttonBitmapActionMirrorVertical = findViewById<Button>(R.id.buttonBitmapActionMirrorVertical)
-        buttonBitmapActionMirrorVertical.setBackgroundColor(COLOR_BUTTON_INACTIVE)
+
+        imageButtonBitmapActionMirrorVertical.setBackgroundColor(COLOR_CLEAR)
         if(mirrorVertical) {
-            buttonBitmapActionMirrorVertical.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            imageButtonBitmapActionMirrorVertical.setBackgroundColor(drawingViewModel.currentColor.value!!)
         }
     }
 
@@ -397,7 +401,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
             bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
         }
 
-        imageButtonBitmapActionFill = findViewById<ImageButton>(R.id.imageButtonBitmapActionFill)
+        initializeToolButtons()
 
         imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
         drawingViewModel.currentColor.observe(this) {
@@ -420,5 +424,14 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
 
         setButtonColors()
+    }
+
+    private fun initializeToolButtons() {
+        imageButtonBitmapActionErase = findViewById(R.id.imageButtonBitmapActionErase)
+        imageButtonBitmapActionFill = findViewById(R.id.imageButtonBitmapActionFill)
+        imageButtonBitmapActionClear = findViewById(R.id.imageButtonBitmapActionClear)
+        imageButtonBitmapActionOverwrite = findViewById(R.id.imageButtonBitmapActionOverwrite)
+        imageButtonBitmapActionMirrorHorizontal = findViewById(R.id.imageButtonBitmapActionMirrorHorizontal)
+        imageButtonBitmapActionMirrorVertical = findViewById(R.id.imageButtonBitmapActionMirrorVertical)
     }
 }

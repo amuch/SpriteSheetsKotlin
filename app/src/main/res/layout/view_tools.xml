@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="0dp"
     android:layout_weight="1"
-    android:background="@drawable/gradient_background_draw"
+    android:background="@color/lightGray"
     android:orientation="horizontal">
 
     <HorizontalScrollView
@@ -16,25 +16,47 @@
             android:layout_height="match_parent"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/buttonBitmapActionErase"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionErase"-->
+<!--                android:onClick="bitmapActionErase"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Erase" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionErase"
                 android:onClick="bitmapActionErase"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/erase"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Erase" />
+                android:padding="0dp" />
 
-            <Button
-                android:id="@+id/buttonBitmapActionOverwrite"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionOverwrite"-->
+<!--                android:onClick="bitmapActionOverwrite"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Overwrite" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionOverwrite"
                 android:onClick="bitmapActionOverwrite"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/overwrite"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Overwrite" />
+                android:padding="0dp" />
 
             <Button
                 android:id="@+id/buttonBitmapActionBlend"
@@ -67,35 +89,68 @@
                 android:layout_gravity="center"
                 android:padding="0dp" />
 
-            <Button
-                android:id="@+id/buttonBitmapActionClear"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionClear"-->
+<!--                android:onClick="bitmapActionClear"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Clear" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionClear"
                 android:onClick="bitmapActionClear"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/clear"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Clear" />
+                android:padding="0dp" />
 
-            <Button
-                android:id="@+id/buttonBitmapActionMirrorHorizontal"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionMirrorHorizontal"-->
+<!--                android:onClick="bitmapActionMirrorHorizontal"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Hori" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionMirrorHorizontal"
                 android:onClick="bitmapActionMirrorHorizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/mirror_horizontal"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Hori" />
+                android:padding="0dp" />
 
-            <Button
-                android:id="@+id/buttonBitmapActionMirrorVertical"
+<!--            <Button-->
+<!--                android:id="@+id/buttonBitmapActionMirrorVertical"-->
+<!--                android:onClick="bitmapActionMirrorVertical"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_margin="10dp"-->
+<!--                android:layout_gravity="center"-->
+<!--                android:gravity="center"-->
+<!--                android:text="Vert" />-->
+
+            <ImageButton
+                android:id="@+id/imageButtonBitmapActionMirrorVertical"
                 android:onClick="bitmapActionMirrorVertical"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
+                android:layout_height="match_parent"
+                android:src="@mipmap/mirror_vertical"
+                android:scaleType="fitCenter"
+                android:adjustViewBounds="true"
                 android:layout_gravity="center"
-                android:gravity="center"
-                android:text="Vert" />
+                android:padding="0dp" />
 
         </LinearLayout>
     </HorizontalScrollView>

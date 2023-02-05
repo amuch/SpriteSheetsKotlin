@@ -49,6 +49,9 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
         val black = DBColor(8, "black", 0x000000, 1)
         this.dbColorList.add(black)
 
+        val darkGray = DBColor(10, "darkGray", 0x444444, 1)
+        this.dbColorList.add(darkGray)
+
         val red : DBColor = DBColor(1, "red", 0xFF0000, 1)
         this.dbColorList.add(red)
 
@@ -69,6 +72,9 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
 
         val brown = DBColor(7, "brown", 0x8B4513, 1)
         this.dbColorList.add(brown)
+
+        val lightGray = DBColor(11, "lightGray", 0xBBBBBB, 1)
+        this.dbColorList.add(lightGray)
 
         val white = DBColor(9, "white", 0xFFFFFF, 1)
         this.dbColorList.add(white)

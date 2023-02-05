@@ -41,6 +41,11 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         return true
     }
 
+    fun fillShouldOverwrite(index: Int, point: Point, color: Int?) : Boolean {
+        val colorsMatch = color == bitmapList[index].getPixel(point.x, point.y)
+        return pointHasZeroAlpha(index, point) || colorsMatch
+    }
+
     fun fillBitmapPartial(bitmap: Bitmap?, index: Int, point: Point, resolution: Int, color: Int?) {
         if(pointHasZeroAlpha(index, point)) {
             colorPixel(bitmapList[index], point, color)
