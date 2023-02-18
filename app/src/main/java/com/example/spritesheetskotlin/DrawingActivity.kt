@@ -36,8 +36,10 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     lateinit var palette: Palette
 //    lateinit var colors: ArrayList<DBColor>
     private lateinit var linearLayoutPalette: LinearLayout
-//    private lateinit var buttonManagePalette: Button
+
     private lateinit var imageButtonManagePalette: ImageButton
+    private lateinit var imageButtonManageTools: ImageButton
+    private lateinit var imageButtonBitmapActionDraw: ImageButton
     private lateinit var imageButtonBitmapActionFill: ImageButton
     private lateinit var imageButtonBitmapActionErase: ImageButton
     private lateinit var imageButtonBitmapActionClear: ImageButton
@@ -46,7 +48,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var imageButtonBitmapActionMirrorVertical: ImageButton
 
     companion object {
-
+//        var blendArray = Array(spriteWidth) { BooleanArray(spriteHeight) }
         var mirrorHorizontal: Boolean = false
         var mirrorVertical: Boolean = false
 
@@ -132,7 +134,9 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                 }
             }
 
-            BitmapActionEnum.BITMAP_BLEND,
+            BitmapActionEnum.BITMAP_BLEND -> {
+//                bitmapManager.setHasBlended(point)
+            }
             BitmapActionEnum.BITMAP_COLOR -> {
                 if(bitmapManager.pointHasZeroAlpha(bitmapManager.indexCurrent, point)) {
                     colorPixel(point)
@@ -234,7 +238,9 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
                     drawingViewModel.currentColor.value = Color.argb(alpha, red, green, blue)
 
-                    actionBitmapDefault()
+                    if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value) {
+                        bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+                    }
                 }
             }
             linearLayoutPalette.addView(imageButton)
@@ -251,6 +257,10 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         return params
     }
 
+    fun dialogManageTools(view: View) {
+        println("View Tools")
+    }
+
     fun dialogManagePalette(view: View) {
         dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_MANAGE_PALETTE
         showDialog()
@@ -261,48 +271,26 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         println("Manage Frame")
     }
 
-
-
     /** Bitmap functionality **/
-    private fun actionBitmapDefault() {
+    fun bitmapActionDraw(view: View) {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
-        setButtonColors()
     }
 
     fun bitmapActionErase(view: View) {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_ERASE
-        /** Set palette to eraser image **/
-        val bitmapEraser: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.erase)
-        imageButtonManagePalette.setBackgroundColor(COLOR_CLEAR)
-        imageButtonManagePalette.setImageBitmap(bitmapEraser)
-        setButtonColors()
     }
 
     fun bitmapActionOverwrite(view: View) {
         bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_OVERWRITE
-        /** Set palette to overwrite image **/
-        val bitmapOverwrite: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.overwrite)
-//        imageButtonManagePalette.setBackgroundColor(COLOR_CLEAR)
-        imageButtonManagePalette.setImageBitmap(bitmapOverwrite)
-        setButtonColors()
     }
 
     fun bitmapActionBlend(view: View) {
-        bitmapViewModel.bitmapAction.value =
-            when (BitmapActionEnum.BITMAP_BLEND) {
-                bitmapViewModel.bitmapAction.value -> BitmapActionEnum.BITMAP_COLOR
-                else -> BitmapActionEnum.BITMAP_BLEND
-            }
-        setButtonColors()
+//        bitmapManager.initializeBlendArray()
+//        bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_BLEND
     }
 
     fun bitmapActionFill(view: View) {
-        bitmapViewModel.bitmapAction.value =
-            when (BitmapActionEnum.BITMAP_FILL) {
-                bitmapViewModel.bitmapAction.value -> BitmapActionEnum.BITMAP_COLOR
-                else -> BitmapActionEnum.BITMAP_FILL
-            }
-        setButtonColors()
+        bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_FILL
     }
 
     fun bitmapActionClear(view: View) {
@@ -318,50 +306,84 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     fun bitmapActionMirrorHorizontal(view: View) {
         mirrorHorizontal = !mirrorHorizontal
-        setButtonColors()
+        setButtonBackgrounds()
     }
 
     fun bitmapActionMirrorVertical(view: View) {
         mirrorVertical = !mirrorVertical
+        setButtonBackgrounds()
+    }
+
+    private fun setButtonBackgrounds() {
+        setButtonImage()
         setButtonColors()
     }
 
-    private fun setButtonColors() {
-        val buttonBitmapActionBlend = findViewById<Button>(R.id.buttonBitmapActionBlend)
+    private fun setButtonImage() {
+//        val buttonBitmapActionBlend = findViewById<Button>(R.id.buttonBitmapActionBlend)
+//        buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
 
-
+        imageButtonBitmapActionDraw.setBackgroundColor(COLOR_CLEAR)
         imageButtonBitmapActionFill.setBackgroundColor(COLOR_CLEAR)
+        imageButtonBitmapActionOverwrite.setBackgroundColor(COLOR_CLEAR)
         imageButtonBitmapActionErase.setBackgroundColor(COLOR_CLEAR)
 
-        buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
-
         when(bitmapViewModel.bitmapAction.value) {
-
-            BitmapActionEnum.BITMAP_FILL ->
+            BitmapActionEnum.BITMAP_FILL -> {
                 drawingViewModel.currentColor.value?.let {
                     imageButtonBitmapActionFill.setBackgroundColor(it)
+                    imageButtonManageTools.setBackgroundColor(it)
                 }
+                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.fill)
+                imageButtonManageTools.setImageBitmap(bitMapFill)
 
-            BitmapActionEnum.BITMAP_BLEND ->
-                buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            }
 
-            BitmapActionEnum.BITMAP_OVERWRITE -> {} //bitmapActionOverwrite
+            BitmapActionEnum.BITMAP_BLEND ->{
+//                buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
+            }
 
-            BitmapActionEnum.BITMAP_ERASE -> {} //imageButtonBitmapActionErase
+
+            BitmapActionEnum.BITMAP_OVERWRITE -> {
+                drawingViewModel.currentColor.value?.let {
+                    imageButtonBitmapActionOverwrite.setBackgroundColor(it)
+                    imageButtonManageTools.setBackgroundColor(it)
+                }
+                val bitmapOverwrite: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.overwrite)
+                imageButtonManageTools.setImageBitmap(bitmapOverwrite)
+            }
+
+            BitmapActionEnum.BITMAP_ERASE -> {
+                val bitmapEraser: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.erase)
+                imageButtonManageTools.setBackgroundColor(COLOR_CLEAR)
+                imageButtonManageTools.setImageBitmap(bitmapEraser)
+            }
 
             null,
-            BitmapActionEnum.BITMAP_COLOR -> {}
+            BitmapActionEnum.BITMAP_COLOR -> {
+                drawingViewModel.currentColor.value?.let {
+                    imageButtonManageTools.setBackgroundColor(it)
+                    imageButtonBitmapActionDraw.setBackgroundColor(it)
+                }
+                val bitmapDraw: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.draw)
+                imageButtonManageTools.setImageBitmap(bitmapDraw)
+            }
         }
+    }
 
+    private fun setButtonColors() {
         imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(COLOR_CLEAR)
         if(mirrorHorizontal) {
-            imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(drawingViewModel.currentColor.value!!)
+            drawingViewModel.currentColor.value?.let {
+                imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(it)
+            }
         }
-
 
         imageButtonBitmapActionMirrorVertical.setBackgroundColor(COLOR_CLEAR)
         if(mirrorVertical) {
-            imageButtonBitmapActionMirrorVertical.setBackgroundColor(drawingViewModel.currentColor.value!!)
+            drawingViewModel.currentColor.value?.let {
+                imageButtonBitmapActionMirrorVertical.setBackgroundColor(it)
+            }
         }
     }
 
@@ -382,7 +404,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     /** Helper methods **/
     @SuppressLint("ClickableViewAccessibility")
-    private fun bindUI(projectName: String = "Test") {
+    private fun bindUI(projectName: String = "Pixel Fart") {
         imageViewMain = findViewById(R.id.imageViewMain)!!
         imageViewMain.setOnTouchListener(this)
 
@@ -396,19 +418,27 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         drawingViewModel.bitmapStorage.observe(this) { }
 
         bitmapViewModel = ViewModelProvider(this).get(BitmapViewModel::class.java)
-        bitmapViewModel.bitmapAction.observe(this) {}
+        bitmapViewModel.bitmapAction.observe(this) {
+            setButtonBackgrounds()
+        }
         if(null == bitmapViewModel.bitmapAction.value) {
             bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
         }
 
         initializeToolButtons()
 
-        imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
+
         drawingViewModel.currentColor.observe(this) {
-            Palette().colorImageButton(it, imageButtonManagePalette, resources)
+            imageButtonManageTools.setBackgroundColor(it)
+//            imageButtonManagePalette.setBackgroundColor(it)
+            setButtonBackgrounds()
+//            Palette().colorImageButton(it, imageButtonManagePalette, resources)
         }
 
-        drawingViewModel.bitmapStorage.value?.let { bitmapManager.bitmapList.add(it) }
+        drawingViewModel.bitmapStorage.value?.let {
+            bitmapManager.bitmapList.add(it)
+//            bitmapManager.initializeBlendArray()
+        }
 
         val test: TextView = findViewById(R.id.textViewProjectTitle)
         test.text = projectName
@@ -421,12 +451,13 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
         dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)
         dialogViewModel.dialogVisible.observe(this) {}
-
-
-        setButtonColors()
     }
 
     private fun initializeToolButtons() {
+        imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
+
+        imageButtonManageTools = findViewById(R.id.imageButtonManageTools)
+        imageButtonBitmapActionDraw = findViewById(R.id.imageButtonBitmapActionDraw)
         imageButtonBitmapActionErase = findViewById(R.id.imageButtonBitmapActionErase)
         imageButtonBitmapActionFill = findViewById(R.id.imageButtonBitmapActionFill)
         imageButtonBitmapActionClear = findViewById(R.id.imageButtonBitmapActionClear)

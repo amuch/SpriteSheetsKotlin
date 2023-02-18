@@ -24,7 +24,7 @@
             android:id="@+id/buttonDialogBitmapSaveConfirm"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@mipmap/floppy_disk"
+            android:background="@mipmap/floppy_black"
             android:scaleType="fitCenter"
             android:adjustViewBounds="true"
             android:layout_gravity="center" />

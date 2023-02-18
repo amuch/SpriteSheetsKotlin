@@ -9,7 +9,12 @@ import kotlin.math.roundToInt
 
 class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
     constructor() : this(ArrayList<Bitmap>(1))
+
     var indexCurrent: Int = 0
+    lateinit var blendArray: Array<BooleanArray>
+
+
+
 
     fun createBitmap(width: Int, height: Int) : Bitmap {
         val config = Bitmap.Config.ARGB_8888
@@ -105,6 +110,45 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
                 colorPixel(bitmap, innerPoint, color)
             }
         }
+    }
+
+    fun initializeBlendArray() {
+        blendArray = Array(this.bitmapList[0].width) { BooleanArray(this.bitmapList[0].height) }
+    }
+
+    fun printBlendArray() {
+        for(i in blendArray.indices) {
+            for(j in 0 until blendArray[i].size) {
+//                blendArray[i][j]
+                println("Column: $i  Row: $j ${blendArray[i][j]}")
+            }
+        }
+    }
+
+    fun setHasBlended(point: Point) {
+        if(point.x < 0) {
+            return
+        }
+
+        if(!(point.x < blendArray.size) ) {
+            return
+        }
+
+        if(point.y < 0) {
+            return
+        }
+
+        if(!(point.y < blendArray[0].size)) {
+            return
+        }
+
+        if(blendArray[point.x][point.y]) {
+            println("Already set Column: ${point.x}  Row: ${point.y} ")
+            return
+        }
+
+        blendArray[point.x][point.y] = true
+        println("Set Column: ${point.x}  Row: ${point.y} to true")
     }
 
     fun projectBitmap(index: Int, resolution: Int) : Bitmap {

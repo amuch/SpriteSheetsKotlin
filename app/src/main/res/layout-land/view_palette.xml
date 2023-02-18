@@ -9,7 +9,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
             android:id="@+id/linearLayoutActivityDrawing"
@@ -20,20 +21,12 @@
         </LinearLayout>
     </ScrollView>
 
-<!--    <Button-->
-<!--        android:id="@+id/buttonManagePalette"-->
-<!--        android:onClick="dialogManagePalette"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:textSize="16sp"-->
-<!--        android:text="@string/button_manage_palette" />-->
-
     <ImageButton
         android:id="@+id/buttonManagePalette"
         android:onClick="dialogManagePalette"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@mipmap/palette"
+        android:src="@mipmap/palette_colors"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"

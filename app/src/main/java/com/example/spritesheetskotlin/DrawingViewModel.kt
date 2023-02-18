@@ -1,6 +1,7 @@
 package com.example.spritesheetskotlin
 
 import android.graphics.Bitmap
+import android.graphics.Point
 import android.widget.Button
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,6 @@ class DrawingViewModel(width: Int, height: Int, resolution: Int, color: Int) : V
     val currentColor: MutableLiveData<Int> by lazy {
         MutableLiveData<Int>(color)
     }
-//    val bitmapMain: MutableLiveData<Bitmap> by lazy {
-//        MutableLiveData<Bitmap>()
-//    }
+
+//    val booleanArray = MutableLiveData() { Array(width){ BooleanArray(height)} }
 }

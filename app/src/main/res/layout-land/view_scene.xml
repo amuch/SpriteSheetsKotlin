@@ -11,7 +11,7 @@
         android:onClick="dialogSaveBitmap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@mipmap/floppy_disk"
+        android:src="@mipmap/floppy_black"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:backgroundTint="@color/translucent"
