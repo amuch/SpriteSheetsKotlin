@@ -1,6 +1,7 @@
 package com.example.spritesheetskotlin
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -16,12 +17,19 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.spritesheetskotlin.bitmap.BitmapActionEnum
 import com.example.spritesheetskotlin.bitmap.BitmapManager
 import com.example.spritesheetskotlin.bitmap.BitmapViewModel
+import com.example.spritesheetskotlin.database.Database
 import com.example.spritesheetskotlin.dialog.*
 import com.example.spritesheetskotlin.palette.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.system.exitProcess
 
 class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
+    lateinit var database: Database
+    private val coroutineScopeMain = CoroutineScope(Dispatchers.Main)
     var spriteWidth = 20 as Int
     var spriteHeight = 20 as Int
     private val resolution: Int = 16
@@ -48,6 +56,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var imageButtonBitmapActionMirrorVertical: ImageButton
 
     companion object {
+        var iter = 0
 //        var blendArray = Array(spriteWidth) { BooleanArray(spriteHeight) }
         var mirrorHorizontal: Boolean = false
         var mirrorVertical: Boolean = false
@@ -55,12 +64,23 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         fun closeApplication() {
             exitProcess(0)
         }
+
+//        fun applicationContext() : Context {
+//            return DrawingActivity.applicationContext()
+//        }
+//
+//        fun showToast(messageToast: String) {
+//
+//            Toast.makeText(applicationContext(), messageToast, Toast.LENGTH_LONG).show()
+//        }
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawing)
+
+        database = Database(this)
 
 //        bindUI(intent.getStringExtra("nameProject").toString())
         bindUI()
@@ -218,7 +238,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     /** Palette functionality **/
-    private fun displayPalette() {
+    fun displayPalette() {
         linearLayoutPalette = findViewById(R.id.linearLayoutActivityDrawing)
         linearLayoutPalette.removeAllViews()
         val longest = max(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels)
@@ -268,7 +288,30 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     /** Frame functionality **/
     fun dialogManageFrame(view: View) {
-        println("Manage Frame")
+//        println("Manage Frame")
+        val name = "Fart"
+//        if(0 == iter % 2) {
+//            Toast.makeText(this, database.deletePalette(name), Toast.LENGTH_LONG).show()
+//        }
+//        else {
+//            Toast.makeText(this, database.createPalette(name), Toast.LENGTH_LONG).show()
+//        }
+
+//        iter += 1
+        val dbPalette = database.readPalette(name)
+        if(null != dbPalette) {
+            coroutineScopeMain.launch {
+                val colors = database.readColors(dbPalette.id)
+                for(i in 0 until colors.size) {
+                    Toast.makeText(applicationContext, colors[i].name, Toast.LENGTH_SHORT).show()
+                    delay(Toast.LENGTH_SHORT.toLong())
+                }
+//                val black = DBColor(8, "black", 0x000000, 1)
+//                database.createColor(black, dbPalette.id)
+//                delay(Toast.LENGTH_LONG.toLong())
+
+            }
+        }
     }
 
     /** Bitmap functionality **/
@@ -339,7 +382,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
             }
 
-            BitmapActionEnum.BITMAP_BLEND ->{
+            BitmapActionEnum.BITMAP_BLEND -> {
 //                buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_ACTIVE)
             }
 
@@ -443,8 +486,11 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         val test: TextView = findViewById(R.id.textViewProjectTitle)
         test.text = projectName
 
+
+        val name = "Fart"
+        val dbPalette = database.readPalette(name)
         palette = Palette()
-        palette.createTestPalette()
+        palette.initializePalette(database, dbPalette.id)
         displayPalette()
 
         dialogManager = drawingViewModel.bitmapMain.value?.let { DialogManager(this, it, palette) }!!

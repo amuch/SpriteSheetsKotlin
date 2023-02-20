@@ -7,15 +7,17 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.Window
 import android.widget.*
+import androidx.core.graphics.red
+import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.palette.ColorDrawable
 import com.example.spritesheetskotlin.palette.NAME_CLEAR_COLOR
 import com.example.spritesheetskotlin.palette.Palette
 import kotlin.math.max
 
-class DialogManagePalette(activity: Activity, palette: Palette): Dialog(activity) {
+class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(activity) {
     private var palette: Palette
-    private var activity: Activity
+    private var activity: DrawingActivity
     private lateinit var buttonCancel: Button
     private lateinit var buttonAccept: Button
     private lateinit var textViewRGB: TextView
@@ -23,6 +25,9 @@ class DialogManagePalette(activity: Activity, palette: Palette): Dialog(activity
     private lateinit var seekBarRed: SeekBar
     private lateinit var seekBarGreen: SeekBar
     private lateinit var seekBarBlue: SeekBar
+    private var red: Int = 0
+    private var green: Int = 0
+    private var blue: Int = 0
 
     init {
         setCancelable(false)
@@ -38,7 +43,23 @@ class DialogManagePalette(activity: Activity, palette: Palette): Dialog(activity
         bindUI()
     }
 
+    private fun setButtonAcceptColor() {
+        var textColor = Color.BLACK
+        if((red + green + blue) < (127 * 3)) {
+            textColor = Color.WHITE
+        }
+        buttonAccept.setTextColor(textColor)
+        buttonAccept.setBackgroundColor(Color.argb(0xFF, red, green, blue))
+    }
 
+    private fun setTextViewRGB() {
+        textViewRGB.text = "rgb($red, $green, $blue)"
+    }
+
+    private fun setTextViewHex() {
+        val formatTemplate = "#%02X%02X%02X"
+        textViewHex.text = formatTemplate.format(red, green, blue)
+    }
 
     private fun bindUI() {
         textViewRGB = findViewById<TextView>(R.id.textViewDialogColorRGB)
@@ -51,29 +72,41 @@ class DialogManagePalette(activity: Activity, palette: Palette): Dialog(activity
 
         buttonAccept = findViewById<Button>(R.id.dialogManagePaletteButtonAccept)
         buttonAccept.setOnClickListener {
-
+            val color = Color.argb(0xFF, red, green, blue)
+            palette.addColor(color)
+            activity.displayPalette()
+            this.cancel()
         }
 
         seekBarRed = findViewById(R.id.seekBarRed)
         seekBarRed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, p1: Int, p2: Boolean) {
-
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
+                red = progress
+                setButtonAcceptColor()
+                setTextViewRGB()
+                setTextViewHex()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarGreen = findViewById(R.id.seekBarGreen)
         seekBarGreen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, p1: Int, p2: Boolean) {
-
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
+                green = progress
+                setButtonAcceptColor()
+                setTextViewRGB()
+                setTextViewHex()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarBlue = findViewById(R.id.seekBarBlue)
         seekBarBlue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
-            override fun onProgressChanged(seekBar: SeekBar?, p1: Int, p2: Boolean) {
-
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
+                blue = progress
+                setButtonAcceptColor()
+                setTextViewRGB()
+                setTextViewHex()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
@@ -95,20 +128,19 @@ class DialogManagePalette(activity: Activity, palette: Palette): Dialog(activity
                 setImageDrawable(ColorDrawable(palette.dbColorList[i].color))
                 layoutParams = colorImageParameters(side, side, margin)
                 setOnClickListener{
-                    val red = Color.red(palette.dbColorList[i].color)
+                    red = Color.red(palette.dbColorList[i].color)
                     seekBarRed.progress = red
-                    val green = Color.green(palette.dbColorList[i].color)
+                    green = Color.green(palette.dbColorList[i].color)
                     seekBarGreen.progress = green
-                    val blue = Color.blue(palette.dbColorList[i].color)
+                    blue = Color.blue(palette.dbColorList[i].color)
                     seekBarBlue.progress = blue
-                    val alpha = when (palette.dbColorList[i].name) {
-                        NAME_CLEAR_COLOR -> 0
-                        else -> 0xFF
-                    }
-                    textViewRGB.text = "rgb($red, $green, $blue)"
-                    val formatTemplate = "#%02X%02X%02X"
-                    textViewHex.text = formatTemplate.format(red, green, blue)
-                    Palette().colorButton(Color.argb(alpha, red, green, blue), buttonAccept)
+//                    val alpha = when (palette.dbColorList[i].name) {
+//                        NAME_CLEAR_COLOR -> 0
+//                        else -> 0xFF
+//                    }
+                    setButtonAcceptColor()
+                    setTextViewRGB()
+                    setTextViewHex()
                 }
             }
             linearLayout.addView(imageButton)

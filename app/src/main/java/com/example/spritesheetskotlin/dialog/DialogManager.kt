@@ -14,7 +14,7 @@ class DialogManager(activity: Activity, bitmapMain: Bitmap, palette: Palette) {
     private var bitmapMainLocal = bitmapMain
 
     init {
-        dialogManagePalette = DialogManagePalette(activity, palette)
+        dialogManagePalette = DialogManagePalette(activity as DrawingActivity, palette)
         dialogSaveBitmap = DialogSaveBitmap(activity, bitmapMainLocal)
         dialogConfirmExit = DialogConfirmExit(activity)
         dialogConfirmClear = DialogConfirmClear(activity as DrawingActivity)

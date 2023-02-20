@@ -6,10 +6,14 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Toast
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
+import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
+import com.example.spritesheetskotlin.database.Database
+import com.example.spritesheetskotlin.database.NOT_FOUND
 
 const val NAME_CLEAR_COLOR: String = "clear"
 const val COLOR_CLEAR = 0x00000000
@@ -18,6 +22,7 @@ const val COLOR_BUTTON_INACTIVE = Color.GRAY
 
 class Palette(var dbColorList: ArrayList<DBColor>) {
     constructor() : this(ArrayList<DBColor>(1))
+
     fun getColorByIndex(index: Int) : Int {
         return dbColorList[index % dbColorList.size].color
     }
@@ -52,7 +57,31 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
         imageButton.setImageBitmap(bitmap)
     }
 
-    fun createTestPalette() {
+    fun addColor(color: Int) {
+        val dbColor = DBColor(20, "test", color, 1)
+        this.dbColorList.add(dbColor)
+    }
+
+    fun loadPalette(database: Database, id: Int) {
+        val dbPalette = database.readPalette(id)
+        if(!(NOT_FOUND == dbPalette.name)) {
+            val dbColors = database.readColors(dbPalette.id)
+            for(i in 0 until dbColors.size) {
+                this.dbColorList.add(dbColors[i])
+            }
+        }
+    }
+
+    fun initializePalette(database: Database, id: Int) {
+        loadPalette(database, id)
+        if(0 == this.dbColorList.size) {
+            println("No colors in selected palette.")
+            loadDefaultPalette()
+        }
+    }
+
+
+    fun loadDefaultPalette() {
         val black = DBColor(8, "black", 0x000000, 1)
         this.dbColorList.add(black)
 
