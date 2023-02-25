@@ -1,6 +1,5 @@
 package com.example.spritesheetskotlin.dialog
 
-import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Window

@@ -7,7 +7,7 @@ class ColorDrawable(color: Int): Drawable() {
     private val red = Color.red(color)
     private val green = Color.green(color)
     private val blue = Color.blue(color)
-    private val paint: Paint = Paint().apply { setARGB(0xFF, red, green, blue)}
+    private val paint: Paint = Paint().apply { setARGB(0xFF, red, green, blue) }
 
 
     override fun draw(canvas: Canvas) {

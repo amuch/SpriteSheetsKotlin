@@ -1,17 +1,15 @@
 package com.example.spritesheetskotlin.dialog
 
-import android.app.Activity
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.Gravity
 import android.view.Window
 import android.widget.*
-import androidx.core.graphics.red
+import androidx.core.graphics.toColorInt
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.palette.ColorDrawable
-import com.example.spritesheetskotlin.palette.NAME_CLEAR_COLOR
 import com.example.spritesheetskotlin.palette.Palette
 import kotlin.math.max
 
@@ -28,6 +26,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
     private var red: Int = 0
     private var green: Int = 0
     private var blue: Int = 0
+    private var name: String = ""
 
     init {
         setCancelable(false)
@@ -58,7 +57,14 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
 
     private fun setTextViewHex() {
         val formatTemplate = "#%02X%02X%02X"
-        textViewHex.text = formatTemplate.format(red, green, blue)
+        name = formatTemplate.format(red, green, blue)
+        textViewHex.text = name
+    }
+
+    private fun setDynamicUIElements() {
+        setButtonAcceptColor()
+        setTextViewRGB()
+        setTextViewHex()
     }
 
     private fun bindUI() {
@@ -72,9 +78,16 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
 
         buttonAccept = findViewById<Button>(R.id.dialogManagePaletteButtonAccept)
         buttonAccept.setOnClickListener {
+
+//            val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
+
             val color = Color.argb(0xFF, red, green, blue)
-            palette.addColor(color)
-            activity.displayPalette()
+//            if(!DrawingActivity.database.colorIsInPalette(color, dbPalette.id)) {
+//                DrawingActivity.database.createColor(name, color, dbPalette.id)
+                palette.addColor(color.toLong())
+                activity.displayPalette()
+//            }
+
             this.cancel()
         }
 
@@ -82,9 +95,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         seekBarRed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 red = progress
-                setButtonAcceptColor()
-                setTextViewRGB()
-                setTextViewHex()
+                setDynamicUIElements()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
@@ -93,9 +104,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         seekBarGreen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 green = progress
-                setButtonAcceptColor()
-                setTextViewRGB()
-                setTextViewHex()
+                setDynamicUIElements()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
@@ -104,14 +113,12 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         seekBarBlue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 blue = progress
-                setButtonAcceptColor()
-                setTextViewRGB()
-                setTextViewHex()
+                setDynamicUIElements()
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) { }
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
-
+        setDynamicUIElements()
         displayPalette()
     }
 
@@ -125,14 +132,14 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         for(i in 0 until palette.dbColorList.size) {
             val imageButton = ImageButton(activity.applicationContext).apply {
                 setBackgroundResource(R.mipmap.background16)
-                setImageDrawable(ColorDrawable(palette.dbColorList[i].color))
+                setImageDrawable(ColorDrawable(Palette().colorInt(palette.dbColorList[i].color)))
                 layoutParams = colorImageParameters(side, side, margin)
                 setOnClickListener{
-                    red = Color.red(palette.dbColorList[i].color)
+                    red = Color.red(palette.dbColorList[i].color.toColorInt())
                     seekBarRed.progress = red
-                    green = Color.green(palette.dbColorList[i].color)
+                    green = Color.green(palette.dbColorList[i].color.toColorInt())
                     seekBarGreen.progress = green
-                    blue = Color.blue(palette.dbColorList[i].color)
+                    blue = Color.blue(palette.dbColorList[i].color.toColorInt())
                     seekBarBlue.progress = blue
 //                    val alpha = when (palette.dbColorList[i].name) {
 //                        NAME_CLEAR_COLOR -> 0

@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Point
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.graphics.toColorInt
+import com.example.spritesheetskotlin.palette.Palette
 import kotlin.math.roundToInt
 
 class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
@@ -13,27 +15,24 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
     var indexCurrent: Int = 0
     lateinit var blendArray: Array<BooleanArray>
 
-
-
-
     fun createBitmap(width: Int, height: Int) : Bitmap {
         val config = Bitmap.Config.ARGB_8888
         return Bitmap.createBitmap(width, height, config)
     }
 
-    fun colorPixel(index: Int, point: Point, color: Int?) {
+    fun colorPixel(index: Int, point: Point, color: Long?) {
         val bitmap = bitmapList[index]
-        bitmap.setPixel(point.x, point.y, color!!)
+        bitmap.setPixel(point.x, point.y, Palette().colorInt(color!!))
     }
 
-    fun colorPixel(bitmap: Bitmap?, point: Point, color: Int?) {
-        bitmap?.setPixel(point.x, point.y, color!!)
+    fun colorPixel(bitmap: Bitmap?, point: Point, color: Long?) {
+        bitmap?.setPixel(point.x, point.y, Palette().colorInt(color!!))
     }
 
-    fun fillBitmap(bitmap: Bitmap?, color: Int?) {
+    fun fillBitmap(bitmap: Bitmap?, color: Long?) {
         for(i in 0 until bitmap!!.width) {
             for(j in 0 until bitmap.height) {
-                bitmap.setPixel(i, j, color!!)
+                bitmap.setPixel(i, j, Palette().colorInt(color!!))
             }
         }
     }
@@ -51,7 +50,7 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         return pointHasZeroAlpha(index, point) || colorsMatch
     }
 
-    fun fillBitmapPartial(bitmap: Bitmap?, index: Int, point: Point, resolution: Int, color: Int?) {
+    fun fillBitmapPartial(bitmap: Bitmap?, index: Int, point: Point, resolution: Int, color: Long?) {
         if(pointHasZeroAlpha(index, point)) {
             colorPixel(bitmapList[index], point, color)
             projectColor(bitmap, point, resolution, color)
@@ -100,7 +99,7 @@ class BitmapManager(var bitmapList: ArrayList<Bitmap>) {
         return Point(x, y)
     }
 
-    fun projectColor(bitmap: Bitmap?, point: Point, resolution: Int, color: Int?) {
+    fun projectColor(bitmap: Bitmap?, point: Point, resolution: Int, color: Long?) {
         val startX: Int = point.x * resolution
         val startY: Int = point.y * resolution
 
