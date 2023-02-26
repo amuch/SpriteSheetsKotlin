@@ -22,14 +22,14 @@
     </ScrollView>
 
     <ImageButton
-        android:id="@+id/buttonManageFrame"
+        android:id="@+id/imageButtonManageFrame"
         android:onClick="dialogManageFrame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@android:color/transparent"
-        android:src="@mipmap/frame"
+        android:background="@mipmap/background16"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"
+        android:layout_marginVertical="5dp"/>
 
 </LinearLayout>

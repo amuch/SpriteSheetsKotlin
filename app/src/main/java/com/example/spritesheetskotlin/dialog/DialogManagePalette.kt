@@ -79,14 +79,14 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         buttonAccept = findViewById<Button>(R.id.dialogManagePaletteButtonAccept)
         buttonAccept.setOnClickListener {
 
-//            val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
+            val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
 
             val color = Color.argb(0xFF, red, green, blue)
-//            if(!DrawingActivity.database.colorIsInPalette(color, dbPalette.id)) {
-//                DrawingActivity.database.createColor(name, color, dbPalette.id)
+            if(!DrawingActivity.database.colorIsInPalette(color.toLong(), dbPalette.id)) {
+                DrawingActivity.database.createColor(name, color.toLong(), dbPalette.id)
                 palette.addColor(color.toLong())
                 activity.displayPalette()
-//            }
+            }
 
             this.cancel()
         }
@@ -125,43 +125,23 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
     private fun displayPalette() {
         val linearLayout: LinearLayout = findViewById(R.id.dialogPaletteColors)
         linearLayout.removeAllViews()
-        val longest = max(activity.resources.displayMetrics.widthPixels, activity.resources.displayMetrics.heightPixels)
-        val side = 30 * longest / (250)
-        val margin = longest / (250)
 
         for(i in 0 until palette.dbColorList.size) {
-            val imageButton = ImageButton(activity.applicationContext).apply {
-                setBackgroundResource(R.mipmap.background16)
-                setImageDrawable(ColorDrawable(Palette().colorInt(palette.dbColorList[i].color)))
-                layoutParams = colorImageParameters(side, side, margin)
-                setOnClickListener{
-                    red = Color.red(palette.dbColorList[i].color.toColorInt())
-                    seekBarRed.progress = red
-                    green = Color.green(palette.dbColorList[i].color.toColorInt())
-                    seekBarGreen.progress = green
-                    blue = Color.blue(palette.dbColorList[i].color.toColorInt())
-                    seekBarBlue.progress = blue
-//                    val alpha = when (palette.dbColorList[i].name) {
-//                        NAME_CLEAR_COLOR -> 0
-//                        else -> 0xFF
-//                    }
-                    setButtonAcceptColor()
-                    setTextViewRGB()
-                    setTextViewHex()
-                }
-            }
+            val color = palette.dbColorList[i].color
+            val imageButton = activity.createPaletteImageButton(color, paletteButtonAction)
             linearLayout.addView(imageButton)
         }
 
     }
 
-    private fun colorImageParameters(width: Int, height: Int, margin: Int) : LinearLayout.LayoutParams {
-        val params: LinearLayout.LayoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
-        params.gravity = Gravity.CENTER
-        params.setMargins(margin, margin, margin, margin)
-        params.width = width
-        params.height = height
+    private val paletteButtonAction : (Long) -> Unit = {
+        red = Color.red(Palette().colorInt(it))
+        seekBarRed.progress = red
+        green = Color.green(Palette().colorInt(it))
+        seekBarGreen.progress = green
+        blue = Color.blue(Palette().colorInt(it))
+        seekBarBlue.progress = blue
 
-        return params
+        setDynamicUIElements()
     }
 }

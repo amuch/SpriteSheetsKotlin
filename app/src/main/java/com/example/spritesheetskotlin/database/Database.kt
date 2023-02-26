@@ -10,6 +10,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+const val PALETTE_RAINBOW = "Rainbow"
+const val PALETTE_DEFAULT = "Rainbow Extended"
+
 const val NAME_DATABASE = "DATABASE_PIXEL_ART"
 const val VERSION_DATABASE = 1
 
@@ -84,14 +87,18 @@ class Database(
 //            "REFERENCES $NAME_PALETTE_TABLE ($PRIMARY_KEY_PALETTE));"
     }
 
+    init {
+        println("DB init.")
+    }
+
     override fun onCreate(sqliteDatabase: SQLiteDatabase?) {
 //        clearTables(sqliteDatabase)
         createTables(sqliteDatabase)
     }
 
-    private fun getDB() : SQLiteDatabase {
-        return this.writableDatabase
-    }
+//    private fun getDB() : SQLiteDatabase {
+//        return this.writableDatabase
+//    }
 
     override fun onUpgrade(sqliteDatabase: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         println("Database upgrade called.")
@@ -101,8 +108,8 @@ class Database(
         sqliteDatabase!!.execSQL(CREATE_TABLE_PALETTE)
         sqliteDatabase.execSQL(CREATE_TABLE_COLOR)
         println("Create tables called.")
-        createDefaultPalettes()
-        sqliteDatabase.close()
+//        createDefaultPalettes()
+//        sqliteDatabase.close()
     }
 
     private fun dropTables(sqliteDatabase: SQLiteDatabase?) {
@@ -116,18 +123,20 @@ class Database(
         createTables(sqliteDatabase)
     }
 
-    fun clearTables() {
-        dropTables(getDB())
-        createTables(getDB())
-    }
+//    fun clearTables() {
+//        dropTables(getDB())
+//        createTables(getDB())
+//    }
 
     /*** Palette CRUD methods. ***/
     fun createPalette(name: String?): String {
         if(name!!.isEmpty()) {
+            println("Palettes must have a name!")
             return "Palettes must have a name!"
         }
 
         if(!isUnique(name, paletteNames())) {
+            println("$name already exists in the database!")
             return "$name already exists in the database!"
         }
 
@@ -136,8 +145,8 @@ class Database(
 
         val sqliteDatabase = this.writableDatabase
         sqliteDatabase.insert(NAME_PALETTE_TABLE, null, contentValues)
-        sqliteDatabase.close()
-
+//        sqliteDatabase.close()
+        println("Added $name to the database.")
         return "Added $name to the database."
     }
 
@@ -154,7 +163,7 @@ class Database(
             dbPalette.name = name
         }
         cursor.close()
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
         return dbPalette
     }
 
@@ -171,7 +180,7 @@ class Database(
             dbPalette.name = namePalette
         }
         cursor.close()
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
         return dbPalette
     }
 
@@ -189,7 +198,7 @@ class Database(
             }
         }
         cursor.close()
-        sqliteDatabase.close()
+        //sqliteDatabase.close()
         return dbPalettes
     }
 
@@ -212,7 +221,7 @@ class Database(
 
         val sqliteDatabase = this.writableDatabase
         sqliteDatabase.update(NAME_PALETTE_TABLE, contentValues, "$PRIMARY_KEY_PALETTE = $id", null)
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
 
         return "Set ${dbPalette.name} to $name in the database."
     }
@@ -226,7 +235,7 @@ class Database(
         val query = "DELETE FROM $NAME_PALETTE_TABLE WHERE $PRIMARY_KEY_PALETTE = $id"
         val sqliteDatabase = this.writableDatabase
         sqliteDatabase.execSQL(query)
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
 
         return "Deleted ${dbPalette.name} from the database."
     }
@@ -263,7 +272,7 @@ class Database(
 
         val sqliteDatabase = this.writableDatabase
         sqliteDatabase.insert(NAME_COLOR_TABLE, null, contentValues)
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
         println("Added $name ($color) to ${dbPalette.name} in the database.")
         return "Added $name ($color) to ${dbPalette.name} in the database."
     }
@@ -285,7 +294,7 @@ class Database(
 
         val sqliteDatabase = this.writableDatabase
         sqliteDatabase.insert(NAME_COLOR_TABLE, null, contentValues)
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
 
         return "Added ${dbColor.color} to ${dbPalette.name} in the database."
     }
@@ -305,7 +314,7 @@ class Database(
             }
         }
         cursor.close()
-        sqliteDatabase.close()
+//        sqliteDatabase.close()
         return dbColors
     }
     /*** Helpers ***/
@@ -350,7 +359,7 @@ class Database(
     }
 
     /*** Default palettes ***/
-    private fun createDefaultPalettes() {
+    fun createDefaultPalettes() {
         createPaletteRainbow()
         createPaletteRainbowExtended()
         coroutineScopeMain.launch {
@@ -361,19 +370,17 @@ class Database(
     }
 
     private fun createPaletteRainbow() {
-        val namePalette = "Rainbow"
-        createPalette(namePalette)
+        createPalette(PALETTE_RAINBOW)
     }
 
     private fun createPaletteRainbowExtended() {
-        val namePalette = "Rainbow Extended"
-        createPalette(namePalette)
+        createPalette(PALETTE_DEFAULT)
     }
 
     private fun populatePaletteRainbow() {
-        val namePalette = "Rainbow"
-        val palette = readPalette(namePalette)
+        val palette = readPalette(PALETTE_RAINBOW)
 
+        createColor("White", 0xFFFFFFFF, palette.id)
         createColor("Black", 0xFF000000, palette.id)
         createColor("Red", 0xFFFF0000, palette.id)
         createColor("Orange", 0xFFFFA500, palette.id)
@@ -385,9 +392,9 @@ class Database(
     }
 
     private fun populatePaletteRainbowExtended() {
-        val namePalette = "Rainbow Extended"
-        val palette = readPalette(namePalette)
+        val palette = readPalette(PALETTE_DEFAULT)
 
+        createColor("White", 0xFFFFFFFF, palette.id)
         createColor("Black", 0xFF000000, palette.id)
         createColor("Dark Gray", 0xFF444444, palette.id)
         createColor("Silver", 0xFF9897A9, palette.id)

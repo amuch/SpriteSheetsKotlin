@@ -6,7 +6,6 @@ import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.widget.Button
 import android.widget.ImageButton
-import android.widget.Toast
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -15,10 +14,7 @@ import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.database.Database
 import com.example.spritesheetskotlin.database.NOT_FOUND
 
-const val NAME_CLEAR_COLOR: String = "clear"
 const val COLOR_CLEAR : Long = 0x00000000
-const val COLOR_BUTTON_ACTIVE = Color.YELLOW
-const val COLOR_BUTTON_INACTIVE = Color.GRAY
 
 class Palette(var dbColorList: ArrayList<DBColor>) {
     constructor() : this(ArrayList<DBColor>(1))

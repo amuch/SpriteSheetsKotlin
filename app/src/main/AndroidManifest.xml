@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
         <activity
-            android:name=".DrawingActivity"
+            android:name=".SplashScreenActivity"
             android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,10 +21,13 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".menu.MenuActivity"
-            android:exported="false">
+            android:name=".DrawingActivity"
+            android:exported="true">
 
         </activity>
+        <activity
+            android:name=".menu.MenuActivity"
+            android:exported="false"></activity>
     </application>
 
 </manifest>

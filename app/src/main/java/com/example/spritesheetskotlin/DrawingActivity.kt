@@ -19,6 +19,7 @@ import com.example.spritesheetskotlin.bitmap.BitmapActionEnum
 import com.example.spritesheetskotlin.bitmap.BitmapManager
 import com.example.spritesheetskotlin.bitmap.BitmapViewModel
 import com.example.spritesheetskotlin.database.Database
+import com.example.spritesheetskotlin.database.PALETTE_DEFAULT
 import com.example.spritesheetskotlin.dialog.*
 import com.example.spritesheetskotlin.palette.*
 import kotlinx.coroutines.CoroutineScope
@@ -44,9 +45,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     lateinit var bitmapViewModel: BitmapViewModel
     lateinit var dialogManager : DialogManager
 
-//    lateinit var palette: Palette
-
-//    lateinit var colors: ArrayList<DBColor>
     private lateinit var linearLayoutPalette: LinearLayout
 
     private lateinit var imageButtonManagePalette: ImageButton
@@ -59,6 +57,8 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var imageButtonBitmapActionMirrorHorizontal: ImageButton
     private lateinit var imageButtonBitmapActionMirrorVertical: ImageButton
 
+    private lateinit var imageButtonManageFrame: ImageButton
+
     companion object {
         var iter = 0
 //        var blendArray = Array(spriteWidth) { BooleanArray(spriteHeight) }
@@ -70,7 +70,8 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         }
         lateinit var namePalette: String
         lateinit var palette: Palette
-//        lateinit var database : Database
+
+        lateinit var database : Database
 
 //        fun applicationContext() : Context {
 //            return DrawingActivity.applicationContext()
@@ -86,8 +87,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawing)
-//        database = Database(this)
-
+        database = Database(this)
 
 //        bindUI(intent.getStringExtra("nameProject").toString())
         bindUI()
@@ -221,21 +221,24 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private fun colorPixel(point: Point) {
         val color = paletteViewModel.currentColor.value
         bitmapManager.colorPixel(bitmapManager.indexCurrent, point, color)
-        bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
+        imageButtonManageFrame.setImageBitmap(drawingViewModel.bitmapStorage.value)
 
-        /**  Perhaps a coroutine here to ensure the operation has completed. **/
+        bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     private fun fillColorPartial(point: Point) {
         val color = paletteViewModel.currentColor.value
         bitmapManager.fillBitmapPartial(drawingViewModel.bitmapMain.value, bitmapManager.indexCurrent, point, resolution, color)
+        imageButtonManageFrame.setImageBitmap(drawingViewModel.bitmapStorage.value)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
 
     private fun erasePixel(point: Point) {
         val color = COLOR_CLEAR
         bitmapManager.colorPixel(bitmapManager.indexCurrent, point, color)
+        imageButtonManageFrame.setImageBitmap(drawingViewModel.bitmapStorage.value)
+
         bitmapManager.projectColor(drawingViewModel.bitmapMain.value, point, resolution, color)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
@@ -249,34 +252,41 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         println("Display Palette")
         linearLayoutPalette = findViewById(R.id.linearLayoutActivityDrawing)
         linearLayoutPalette.removeAllViews()
+
+        for(i in 0 until paletteViewModel.palette.value!!.dbColorList.size) {
+            val color = paletteViewModel.palette.value!!.dbColorList[i].color
+            linearLayoutPalette.addView(createPaletteImageButton(color, paletteButtonAction))
+        }
+    }
+
+    fun createPaletteImageButton(color: Long, clickMethod: (color: Long) -> Unit) : ImageButton {
         val longest = max(resources.displayMetrics.widthPixels, resources.displayMetrics.heightPixels)
         val side = 30 * longest / (250)
         val margin = longest / (250)
 
-        for(i in 0 until paletteViewModel.palette.value!!.dbColorList.size) {
-            println("${i} ${paletteViewModel.palette.value!!.dbColorList.size}")
-            val imageButton = ImageButton(this).apply {
-                setBackgroundResource(R.mipmap.background2)
-                setImageDrawable(ColorDrawable(Palette().colorInt(paletteViewModel.palette.value!!.dbColorList[i].color)))
-                layoutParams = colorImageParameters(side, side, margin)
-                setOnClickListener{
-//                    val red = Color.red(paletteViewModel.palette.value!!.dbColorList[i].color..toColorInt())
-//                    val green = Color.green(paletteViewModel.palette.value!!.dbColorList[i].color..toColorInt())
-//                    val blue = Color.blue(paletteViewModel.palette.value!!.dbColorList[i].color..toColorInt())
-//                    val alpha = Color.alpha(paletteViewModel.palette.value!!.dbColorList[i].color..toColorInt())
-
-//                    drawingViewModel.currentColor.value = Color.argb(alpha, red, green, blue)
-//                    paletteViewModel.currentColor.value = Color.argb(alpha, red, green, blue)
-                    paletteViewModel.currentColor.value = paletteViewModel.palette.value!!.dbColorList[i].color
-//                    println("Switched to ${paletteViewModel.currentColor.value}")
-
-                    if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value) {
-                        bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
-                    }
-                }
+        val imageButton = ImageButton(this).apply {
+            setBackgroundResource(R.mipmap.background2)
+            setImageDrawable(ColorDrawable(Palette().colorInt(color)))
+            layoutParams = colorImageParameters(side, side, 0)
+            setOnClickListener {
+                clickMethod(color)
             }
-            linearLayoutPalette.addView(imageButton)
         }
+        return imageButton
+    }
+
+    private val paletteButtonAction : (Long) -> Unit = {
+        if(BitmapActionEnum.BITMAP_ERASE == bitmapViewModel.bitmapAction.value) {
+            bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+        }
+
+        if(BitmapActionEnum.BITMAP_FILL == bitmapViewModel.bitmapAction.value) {
+            if(paletteViewModel.currentColor.value != it) {
+                bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
+            }
+        }
+
+        paletteViewModel.currentColor.value = it
     }
 
     private fun colorImageParameters(width: Int, height: Int, margin: Int) : LinearLayout.LayoutParams {
@@ -301,11 +311,12 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     /** Frame functionality **/
     fun dialogManageFrame(view: View) {
 //            Toast.makeText(this, database.deletePalette(name), Toast.LENGTH_LONG).show()
-//        val dbPalette = database.readPalette(namePalette)
+        val dbPalette = database.readPalette(namePalette)
+        println("Db palette: $dbPalette")
 //        if(null != dbPalette) {
-//            coroutineScopeMain.launch {
-//                database.clearTables()
-//            }
+            coroutineScopeMain.launch {
+                database.createDefaultPalettes()
+            }
 //        }
     }
 
@@ -338,6 +349,8 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     fun clearBitmap() {
         bitmapManager.fillBitmap(drawingViewModel.bitmapStorage.value, COLOR_CLEAR)
+        imageButtonManageFrame.setImageBitmap(drawingViewModel.bitmapStorage.value)
+
         bitmapManager.fillBitmap(drawingViewModel.bitmapMain.value, COLOR_CLEAR)
         setImageView(imageViewMain, drawingViewModel.bitmapMain.value)
     }
@@ -372,7 +385,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     imageButtonBitmapActionFill.setBackgroundColor(Palette().colorInt(it))
                     imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
                 }
-                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.fill)
+                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.bucket)
                 imageButtonManageTools.setImageBitmap(bitMapFill)
 
             }
@@ -411,16 +424,19 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun setButtonColors() {
         imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(Palette().colorInt(COLOR_CLEAR))
-        if(mirrorHorizontal) {
-            paletteViewModel.currentColor.value?.let {
-                imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(Palette().colorInt(it))
-            }
-        }
-
         imageButtonBitmapActionMirrorVertical.setBackgroundColor(Palette().colorInt(COLOR_CLEAR))
-        if(mirrorVertical) {
-            paletteViewModel.currentColor.value?.let {
-                imageButtonBitmapActionMirrorVertical.setBackgroundColor(Palette().colorInt(it))
+
+        if(BitmapActionEnum.BITMAP_ERASE != bitmapViewModel.bitmapAction.value) {
+            if(mirrorHorizontal) {
+                paletteViewModel.currentColor.value?.let {
+
+                    imageButtonBitmapActionMirrorHorizontal.setBackgroundColor(Palette().colorInt(it))
+                }
+            }
+            if(mirrorVertical) {
+                paletteViewModel.currentColor.value?.let {
+                    imageButtonBitmapActionMirrorVertical.setBackgroundColor(Palette().colorInt(it))
+                }
             }
         }
     }
@@ -443,18 +459,43 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     /** Helper methods **/
     @SuppressLint("ClickableViewAccessibility")
     private fun bindUI(projectName: String = "Pixel Fart") {
+        initializeUIImages()
+        initializeViewModels()
+        initializeButtons()
+        initializePalette()
+        initializeDialogManager()
+
+        val test: TextView = findViewById(R.id.textViewProjectTitle)
+        test.text = projectName
+    }
+
+    private fun initializeUIImages() {
         imageViewMain = findViewById(R.id.imageViewMain)!!
         imageViewMain.setOnTouchListener(this)
+    }
 
-        drawingViewModelFactory = DrawingViewModelFactory(spriteWidth, spriteHeight, resolution, Color.BLACK)
+    private fun initializeViewModels() {
+        initializeDrawingViewModel()
+        initializeBitmapViewModel()
+    }
+
+    private fun initializeDrawingViewModel() {
+        drawingViewModelFactory = DrawingViewModelFactory(spriteWidth, spriteHeight, resolution)
         drawingViewModel = ViewModelProvider(this, drawingViewModelFactory).get(DrawingViewModel::class.java)
-
         drawingViewModel.bitmapMain.observe(this) {
             setImageView(imageViewMain, it)
         }
+        drawingViewModel.bitmapStorage.observe(this) {
+            imageButtonManageFrame.setImageBitmap(it)
+        }
 
-        drawingViewModel.bitmapStorage.observe(this) { }
+        drawingViewModel.bitmapStorage.value?.let {
+            bitmapManager.bitmapList.add(it)
+//            bitmapManager.initializeBlendArray()
+        }
+    }
 
+    private fun initializeBitmapViewModel() {
         bitmapViewModel = ViewModelProvider(this).get(BitmapViewModel::class.java)
         bitmapViewModel.bitmapAction.observe(this) {
             setButtonBackgrounds()
@@ -462,61 +503,19 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         if(null == bitmapViewModel.bitmapAction.value) {
             bitmapViewModel.bitmapAction.value = BitmapActionEnum.BITMAP_COLOR
         }
+    }
 
+    private fun initializeButtons() {
+        initializePaletteButton()
         initializeToolButtons()
+        initializeFrame()
+    }
 
-
-//        drawingViewModel.currentColor.observe(this) {
-//            imageButtonManageTools.setBackgroundColor(it)
-//            setButtonBackgrounds()
-//        }
-
-        drawingViewModel.bitmapStorage.value?.let {
-            bitmapManager.bitmapList.add(it)
-//            bitmapManager.initializeBlendArray()
-        }
-
-        val test: TextView = findViewById(R.id.textViewProjectTitle)
-        test.text = projectName
-
-        /*** Create factory **/
-        namePalette = "Rainbow"
-//        paletteViewModelFactory = PaletteViewModelFactory(namePalette, database)
-//        paletteViewModel = ViewModelProvider(this, paletteViewModelFactory).get(PaletteViewModel::class.java)
-
-
-        palette = Palette()
-        palette.loadDefaultPalette()
-
-        paletteViewModelFactory = PaletteViewModelFactory(palette)
-        paletteViewModel = ViewModelProvider(this, paletteViewModelFactory).get(PaletteViewModel::class.java)
-
-        paletteViewModel.palette.observe(this) {
-//            if(it.dbColorList.size == 0) {
-//                val dbPalette = database.readPalette(namePalette)
-//                it.initializePalette(database, dbPalette.id)
-//                displayPalette()
-//            }
-        }
-
-        paletteViewModel.currentColor.observe(this) {
-            imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
-            setButtonBackgrounds()
-        }
-
-        displayPalette()
-
-        dialogManager = drawingViewModel.bitmapMain.value?.let {
-            DialogManager(this, it, paletteViewModel.palette.value!!)
-        }!!
-
-        dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)
-        dialogViewModel.dialogVisible.observe(this) {}
+    private fun initializePaletteButton() {
+        imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
     }
 
     private fun initializeToolButtons() {
-        imageButtonManagePalette = findViewById(R.id.buttonManagePalette)
-
         imageButtonManageTools = findViewById(R.id.imageButtonManageTools)
         imageButtonBitmapActionDraw = findViewById(R.id.imageButtonBitmapActionDraw)
         imageButtonBitmapActionErase = findViewById(R.id.imageButtonBitmapActionErase)
@@ -525,5 +524,44 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         imageButtonBitmapActionOverwrite = findViewById(R.id.imageButtonBitmapActionOverwrite)
         imageButtonBitmapActionMirrorHorizontal = findViewById(R.id.imageButtonBitmapActionMirrorHorizontal)
         imageButtonBitmapActionMirrorVertical = findViewById(R.id.imageButtonBitmapActionMirrorVertical)
+    }
+
+    private fun initializeFrame() {
+        imageButtonManageFrame = findViewById(R.id.imageButtonManageFrame)
+    }
+
+    private fun initializePalette() {
+        namePalette = PALETTE_DEFAULT
+        val dbPalette = database.readPalette(namePalette)
+
+        palette = Palette()
+        palette.initializePalette(database, dbPalette.id)
+
+        paletteViewModelFactory = PaletteViewModelFactory(palette)
+        paletteViewModel = ViewModelProvider(this, paletteViewModelFactory).get(PaletteViewModel::class.java)
+
+        paletteViewModel.palette.observe(this) {
+            if(it.dbColorList.size == 0) {
+//                val dbPalette = database.readPalette(namePalette)
+//                it.initializePalette(database, dbPalette.id)
+//                displayPalette()
+            }
+        }
+
+        paletteViewModel.currentColor.observe(this) {
+            imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
+            setButtonBackgrounds()
+        }
+
+        displayPalette()
+    }
+
+    private fun initializeDialogManager() {
+        dialogManager = drawingViewModel.bitmapMain.value?.let {
+            DialogManager(this, it, paletteViewModel.palette.value!!)
+        }!!
+
+        dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)
+        dialogViewModel.dialogVisible.observe(this) {}
     }
 }
