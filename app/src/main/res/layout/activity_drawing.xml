@@ -11,7 +11,7 @@
 
     <include layout="@layout/view_draw_main" />
 
-    <include layout="@layout/view_scene" />
+    <include layout="@layout/view_settings" />
 
     <include layout="@layout/view_tools" />
 

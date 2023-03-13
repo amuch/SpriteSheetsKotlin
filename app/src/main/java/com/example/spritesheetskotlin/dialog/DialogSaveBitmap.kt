@@ -15,21 +15,23 @@ import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
+import com.example.spritesheetskotlin.DrawingActivity
+import com.example.spritesheetskotlin.DrawingViewModel
 import com.example.spritesheetskotlin.R
 import java.io.IOException
 import java.util.*
 
-class DialogSaveBitmap(activity: Activity, bitmap: Bitmap): Dialog(activity)  {
-    private var activity: Activity
-    private var bitmap: Bitmap
+class DialogSaveBitmap(activity: DrawingActivity, drawingViewModel: DrawingViewModel): Dialog(activity)  {
+    private var activity: DrawingActivity
+    private var drawingViewModel: DrawingViewModel
     lateinit var imageViewSave: ImageView
     private lateinit var imageButtonSave: ImageButton
     private lateinit var buttonCancel: Button
 
     init {
         setCancelable(false)
-        bitmap.also { this.bitmap = it }
         activity.also { this.activity = it }
+        drawingViewModel.also{ this.drawingViewModel = it}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,15 @@ class DialogSaveBitmap(activity: Activity, bitmap: Bitmap): Dialog(activity)  {
         setContentView(R.layout.dialog_save_bitmap)
 
         bindUI()
+    }
+
+    override fun show() {
+        super.show()
+        updateBitmap()
+    }
+
+    fun updateBitmap() {
+        imageViewSave.setImageBitmap(drawingViewModel.bitmapMain.value!!)
     }
 
     private fun generateRandomString(range : Random, characters : String, length: Int) : String {
@@ -69,7 +80,7 @@ class DialogSaveBitmap(activity: Activity, bitmap: Bitmap): Dialog(activity)  {
                 ?: throw IOException("Failed to save image.")
 
             contentResolver.openOutputStream(uri)?.use {
-                if(!bitmap.compress(Bitmap.CompressFormat.PNG, 60, it)) {
+                if(!drawingViewModel.bitmapMain.value!!.compress(Bitmap.CompressFormat.PNG, 60, it)) {
                     throw IOException("Failed to compress bitmap.")
                 }
             } ?:
@@ -106,7 +117,7 @@ class DialogSaveBitmap(activity: Activity, bitmap: Bitmap): Dialog(activity)  {
 
     private fun bindUI() {
         imageViewSave = findViewById(R.id.imageViewDialogBitmapSave)
-        imageViewSave.setImageBitmap(this.bitmap)
+        imageViewSave.setImageBitmap(this.drawingViewModel.bitmapMain.value!!)
 
         imageButtonSave = findViewById<ImageButton>(R.id.buttonDialogBitmapSaveConfirm)
         imageButtonSave.setOnClickListener {

@@ -14,7 +14,7 @@
         android:gravity="center"
         android:textSize="22sp" />
 
-    <com.example.spritesheetskotlin.customviews.ImageViewSquareLandscape
+    <com.example.spritesheetskotlin.customviews.ImageViewSquareMinimumSide
         android:id="@+id/imageViewMain"
         android:layout_width="match_parent"
         android:layout_height="0dp"

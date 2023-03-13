@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/gradient_background_draw">
+
+    <TextView
+        android:id="@+id/text_view_dialog_settings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_margin="30dp"
+        android:textSize="22sp"
+        android:text="@string/text_view_settings" />
+
+
+    <Spinner
+        android:id="@+id/spinner_image_dimension"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:dropDownWidth="80dp" />
+
+    <TextView
+        android:id="@+id/text_view_image_dimension"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:textSize="22sp"
+        android:text="@string/text_view_settings_dimensions"
+        android:layout_above="@+id/spinner_image_dimension"
+        android:layout_alignParentStart="true" />
+
+
+    <Spinner
+        android:id="@+id/spinner_image_resolution"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:dropDownWidth="80dp"/>
+
+    <TextView
+        android:id="@+id/text_view_image_resolution"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="20dp"
+        android:textSize="22sp"
+        android:text="@string/text_view_settings_resolution"
+        android:layout_above="@+id/spinner_image_resolution"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/button_accept_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:textSize="20sp"
+        android:text="@string/button_accept_settings_text"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
+
+</RelativeLayout>

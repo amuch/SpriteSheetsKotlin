@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Point
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.graphics.toColorInt
 import com.example.spritesheetskotlin.palette.Palette
 import kotlin.math.roundToInt
 

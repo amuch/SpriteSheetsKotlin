@@ -7,15 +7,25 @@
     android:orientation="vertical">
 
     <ImageButton
+        android:id="@+id/buttonSettings"
+        android:onClick="dialogSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:src="@mipmap/settings32"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:backgroundTint="@color/translucent" />
+
+    <ImageButton
         android:id="@+id/buttonSaveBitmap"
         android:onClick="dialogSaveBitmap"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:src="@mipmap/floppy_black"
+        android:src="@mipmap/floppy32"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
-        android:backgroundTint="@color/translucent"
-        android:text="@string/button_save_bitmap" />
+        android:backgroundTint="@color/translucent" />
 
 </RelativeLayout>

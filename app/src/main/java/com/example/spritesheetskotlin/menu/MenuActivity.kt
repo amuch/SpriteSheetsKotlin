@@ -11,17 +11,25 @@ import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.createDataStore
 import androidx.lifecycle.ViewModelProvider
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
+
+
 
 class MenuActivity : AppCompatActivity() {
     lateinit var menuViewModel: MenuViewModel
     private var dialogVisible: Boolean = false
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_menu)
+
+
 
         menuViewModel = ViewModelProvider(this).get(MenuViewModel::class.java)
         menuViewModel.nameProject.observe(this) {}

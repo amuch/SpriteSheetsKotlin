@@ -11,7 +11,7 @@
         android:onClick="dialogManageFrame"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@mipmap/background16"
+        android:src="@mipmap/frames"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
@@ -20,10 +20,11 @@
     <HorizontalScrollView
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:scrollbars="none">
 
         <LinearLayout
-            android:id="@+id/linearLayoutViewFrame"
+            android:id="@+id/linearLayoutFrame"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="horizontal"

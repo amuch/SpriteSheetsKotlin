@@ -24,4 +24,12 @@
     <string name="button_confirm_exit_false">No</string>
     <string name="text_view_confirm_exit">Would you like to close the app?</string>
     <string name="text_view_confirm_clear">Clear the image?</string>
+    <string name="add_frame">Add</string>
+    <string name="text_view_settings">Set Image Dimensions and Resolution</string>
+    <string name="text_view_settings_dimensions">Dimensions</string>
+    <string name="text_view_settings_resolution">Resolution</string>
+    <string name="button_accept_settings_text">Accept</string>
+    <string name="close">Close</string>
+    <string name="duplicate_frame">Duplicate</string>
+    <string name="delete_frame">Delete</string>
 </resources>

@@ -3,15 +3,11 @@ package com.example.spritesheetskotlin.dialog
 import android.app.Dialog
 import android.graphics.Color
 import android.os.Bundle
-import android.view.Gravity
 import android.view.Window
 import android.widget.*
-import androidx.core.graphics.toColorInt
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
-import com.example.spritesheetskotlin.palette.ColorDrawable
 import com.example.spritesheetskotlin.palette.Palette
-import kotlin.math.max
 
 class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(activity) {
     private var palette: Palette
@@ -37,7 +33,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.dialog_palette_manager)
+        setContentView(R.layout.dialog_manage_palette)
 
         bindUI()
     }
@@ -86,6 +82,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
                 DrawingActivity.database.createColor(name, color.toLong(), dbPalette.id)
                 palette.addColor(color.toLong())
                 activity.displayPalette()
+                displayPalette()
             }
 
             this.cancel()
