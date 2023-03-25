@@ -41,7 +41,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     var spriteWidth = SPRITE_DIMENSION_DEFAULT as Int
     var spriteHeight = SPRITE_DIMENSION_DEFAULT as Int
     var resolution: Int = SPRITE_RESOLUTION_DEFAULT
-    val dataStoreManager = DataStoreManager(this)
+//    val dataStoreManager = DataStoreManager(this)
     lateinit var imageViewMain: ImageView
     lateinit var drawingViewModelFactory: DrawingViewModelFactory
     lateinit var drawingViewModel : DrawingViewModel
@@ -80,19 +80,23 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         lateinit var database : Database
     }
 
+    init {
+        database = Database(this)
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawing)
-        database = Database(this)
+//        database = Database(this)
 
         resolution = intent.getIntExtra(PREFERENCE_RESOLUTION, SPRITE_RESOLUTION_DEFAULT)
         spriteWidth = intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)
         spriteHeight = intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)
-        println("Resolution: ${intent.getIntExtra(PREFERENCE_RESOLUTION, SPRITE_RESOLUTION_DEFAULT)}")
-        println("Stored Resolution ${dataStoreManager.readPreference(PREFERENCE_RESOLUTION)}")
-        println("Dimension: ${intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)}")
-        println("Stored Dimension ${dataStoreManager.readPreference(PREFERENCE_DIMENSION)}")
+        println("Drawing Resolution: ${intent.getIntExtra(PREFERENCE_RESOLUTION, SPRITE_RESOLUTION_DEFAULT)}")
+//        println("Stored Resolution ${dataStoreManager.readPreference(PREFERENCE_RESOLUTION)}")
+        println("Drawing Dimension: ${intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)}")
+//        println("Stored Dimension ${dataStoreManager.readPreference(PREFERENCE_DIMENSION)}")
 
 //        bindUI(intent.getStringExtra("nameProject").toString())
         bindUI()
@@ -105,6 +109,12 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
             dialogManager.closeDialogs()
         }
     }
+
+//    override fun onDestroy() {
+//        println("Destroy")
+//        dialogManager.closeDialogs()
+//        super.onDestroy()
+//    }
 
     override fun onRestoreInstanceState(bundle: Bundle) {
         super.onRestoreInstanceState(bundle)
@@ -431,7 +441,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     imageButtonBitmapActionFill.setBackgroundColor(Palette().colorInt(it))
                     imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
                 }
-                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.bucket)
+                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.fill64)
                 imageButtonManageTools.setImageBitmap(bitMapFill)
 
             }
@@ -503,7 +513,8 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     fun dialogSettings(view: View) {
-        println("Dialog Settings")
+        dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_SETTINGS
+        showDialog()
     }
 
     /** Helper methods **/
@@ -582,7 +593,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         val dbPalette = database.readPalette(namePalette)
 
         palette = Palette()
-        palette.initializePalette(database, dbPalette.id)
+        palette.initializePalette(dbPalette.id)
 
         paletteViewModelFactory = PaletteViewModelFactory(palette)
         paletteViewModel = ViewModelProvider(this, paletteViewModelFactory).get(PaletteViewModel::class.java)
@@ -599,7 +610,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     private fun initializeDialogManager() {
         dialogManager = drawingViewModel.bitmapMain.value?.let {
-            DialogManager(this, drawingViewModel, paletteViewModel.palette.value!!, bitmapManager())
+            DialogManager(this, drawingViewModel, paletteViewModel.palette.value!!, bitmapManager(), database)
         }!!
 
         dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)

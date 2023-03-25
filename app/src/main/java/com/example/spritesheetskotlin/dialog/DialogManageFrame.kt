@@ -12,6 +12,10 @@ import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.DrawingViewModel
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.bitmap.BitmapManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.runBlocking
+import kotlin.concurrent.thread
 import kotlin.math.max
 
 const val IMAGE_BUTTON_DIALOG_FRAME_BASE = 2000
@@ -82,12 +86,22 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
         buttonDelete = findViewById(R.id.dialogManageFrameButtonDelete)
         buttonDelete.setOnClickListener {
             if(bitmapManager.bitmapList.size > 1) {
+//                Dispatchers.Main.run {
+//                    bitmapManager.bitmapList.removeAt(bitmapManager.indexCurrent)
+//                    bitmapManager.indexCurrent = 0
+//                    activity.setStorageBitmap(0)
+//                    displayFrames()
+//                    activity.displayFrames()
+//                    updateBitmap()
+//                }
+
                 bitmapManager.bitmapList.removeAt(bitmapManager.indexCurrent)
                 bitmapManager.indexCurrent = 0
                 activity.setStorageBitmap(0)
                 displayFrames()
                 activity.displayFrames()
                 updateBitmap()
+
             }
         }
 

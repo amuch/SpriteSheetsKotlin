@@ -100,17 +100,19 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="vertical">
+        android:layout_weight="2" >
+
         <TextView
             android:id="@+id/textViewDialogColorRGB"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentTop="true"
             android:textSize="20sp"
             android:textColor="@color/black"
             android:text="@string/color_string_default"/>
@@ -121,38 +123,111 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/textViewDialogColorRGB"
             android:textSize="20sp"
             android:textColor="@color/black"
             android:text="@string/hex_string_default"/>
 
-        <!--            <EditText-->
-        <!--                android:id="@+id/colorDialogEditText"-->
-        <!--                android:layout_width="match_parent"-->
-        <!--                android:layout_height="wrap_content"-->
-        <!--                android:layout_margin="10dp"-->
-        <!--                android:gravity="center"-->
-        <!--                android:layout_centerHorizontal="true"-->
-        <!--                android:layout_below="@+id/colorDialogTextView"-->
-        <!--                android:backgroundTint="@color/white"-->
-        <!--                android:hint="@string/optional_color_name"-->
-        <!--                android:textSize="20sp"/>-->
-
         <Button
             android:id="@+id/dialogManagePaletteButtonAccept"
-            android:layout_width="match_parent"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10sp"
+            android:layout_margin="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
             android:textColor="@color/white"
             android:text="@string/accept">
 
         </Button>
 
         <Button
-            android:id="@+id/dialogManagePaletteButtonCancel"
-            android:layout_width="match_parent"
+            android:id="@+id/dialogManagePaletteButtonUpdate"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@string/cancel"/>
+            android:layout_margin="20dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:text="@string/update">
 
-    </LinearLayout>
+        </Button>
+
+        <Button
+            android:id="@+id/dialogManagePaletteButtonDelete"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:text="@string/delete"/>
+
+        <Button
+            android:id="@+id/dialogManagePaletteButtonClose"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:text="@string/close"/>
+
+    </RelativeLayout>
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_weight="2"-->
+<!--        android:orientation="vertical">-->
+<!--        <TextView-->
+<!--            android:id="@+id/textViewDialogColorRGB"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:gravity="center"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:text="@string/color_string_default"/>-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textViewDialogColorHex"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10dp"-->
+<!--            android:gravity="center"-->
+<!--            android:textSize="20sp"-->
+<!--            android:textColor="@color/black"-->
+<!--            android:text="@string/hex_string_default"/>-->
+
+
+
+
+
+<!--        <Button-->
+<!--            android:id="@+id/dialogManagePaletteButtonAccept"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:text="@string/accept">-->
+
+<!--        </Button>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/dialogManagePaletteButtonUpdate"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:textColor="@color/white"-->
+<!--            android:text="@string/update">-->
+
+<!--        </Button>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/dialogManagePaletteButtonCancel"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:text="@string/cancel"/>-->
+
+<!--    </LinearLayout>-->
 </LinearLayout>

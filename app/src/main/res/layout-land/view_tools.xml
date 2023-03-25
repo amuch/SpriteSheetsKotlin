@@ -66,7 +66,7 @@
                 android:onClick="bitmapActionFill"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@mipmap/bucket"
+                android:src="@mipmap/fill64"
                 android:scaleType="fitCenter"
                 android:adjustViewBounds="true"
                 android:layout_gravity="center"

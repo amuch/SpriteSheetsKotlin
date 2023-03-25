@@ -4,14 +4,14 @@ import android.app.Activity
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Window
-import android.widget.Button
+import android.widget.ImageButton
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 
 class DialogConfirmExit(activity: Activity): Dialog(activity)  {
     private var activity: Activity
-    private lateinit var buttonConfirmExitTrue: Button
-    private lateinit var buttonConfirmExitFalse: Button
+    private lateinit var imageButtonExitConfirm: ImageButton
+    private lateinit var imageButtonExitDeny: ImageButton
 
     init {
         setCancelable(false)
@@ -27,14 +27,14 @@ class DialogConfirmExit(activity: Activity): Dialog(activity)  {
     }
 
     private fun bindUI() {
-        buttonConfirmExitTrue = findViewById(R.id.button_confirm_exit_true)
-        buttonConfirmExitTrue.setOnClickListener {
+        imageButtonExitConfirm = findViewById(R.id.image_button_exit_confirm)
+        imageButtonExitConfirm.setOnClickListener {
             DrawingActivity.closeApplication()
             this.cancel()
         }
 
-        buttonConfirmExitFalse = findViewById(R.id.button_confirm_exit_false)
-        buttonConfirmExitFalse.setOnClickListener {
+        imageButtonExitDeny = findViewById(R.id.image_button_exit_deny)
+        imageButtonExitDeny.setOnClickListener {
             this.cancel()
         }
     }

@@ -1,9 +1,14 @@
 package com.example.spritesheetskotlin.database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.graphics.Color
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import com.example.spritesheetskotlin.palette.DBColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +54,20 @@ const val CREATE_TABLE_COLOR =
             "FOREIGN KEY ($PRIMARY_KEY_PALETTE)" +
             "REFERENCES $NAME_PALETTE_TABLE ($PRIMARY_KEY_PALETTE));"
 
+const val NAME_PREFERENCE_TABLE = "TABLE_PREFERENCE"
+const val PRIMARY_KEY_PREFERENCE = "id_preference"
+const val INDEX_ID_PREFERENCE = 0
+const val NAME_PREFERENCE = "name_preference"
+const val INDEX_PREFERENCE_NAME = 1
+const val INT_PREFERENCE = "int_preference"
+const val INDEX_PREFERENCE_INT = 2
+
+const val CREATE_PREFERENCE_TABLE =
+    "$CREATE_TABLE $NAME_PREFERENCE_TABLE" +
+            "($PRIMARY_KEY_PREFERENCE INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            "$NAME_PREFERENCE VARCHAR(63), " +
+            "$INT_PREFERENCE INTEGER NOT NULL);"
+
 class Database(
     context: Context?,
 ) : SQLiteOpenHelper(context, NAME_DATABASE, null, VERSION_DATABASE) {
@@ -87,13 +106,35 @@ class Database(
 //            "REFERENCES $NAME_PALETTE_TABLE ($PRIMARY_KEY_PALETTE));"
     }
 
+    lateinit var database: SQLiteDatabase
     init {
         println("DB init.")
+
     }
 
+    var isCreating = false
+
     override fun onCreate(sqliteDatabase: SQLiteDatabase?) {
+        println("DB on Create.")
+        isCreating = true
+        database = sqliteDatabase!!
 //        clearTables(sqliteDatabase)
+
         createTables(sqliteDatabase)
+    }
+
+    override fun getWritableDatabase(): SQLiteDatabase {
+        if(isCreating && database.isOpen) {
+            return database
+        }
+        return super.getWritableDatabase()
+    }
+
+    override fun getReadableDatabase(): SQLiteDatabase {
+        if(isCreating && database.isOpen) {
+            return database
+        }
+        return super.getReadableDatabase()
     }
 
 //    private fun getDB() : SQLiteDatabase {
@@ -107,13 +148,19 @@ class Database(
     private fun createTables(sqliteDatabase: SQLiteDatabase?) {
         sqliteDatabase!!.execSQL(CREATE_TABLE_PALETTE)
         sqliteDatabase.execSQL(CREATE_TABLE_COLOR)
+        sqliteDatabase.execSQL(CREATE_PREFERENCE_TABLE)
         println("Create tables called.")
-//        createDefaultPalettes()
+
+
+        createPaletteRainbowExtended()
+        populatePaletteRainbowExtended()
+        isCreating = false
 //        sqliteDatabase.close()
     }
 
     private fun dropTables(sqliteDatabase: SQLiteDatabase?) {
-        sqliteDatabase!!.execSQL("$DROP_TABLE $NAME_COLOR_TABLE;")
+        sqliteDatabase!!.execSQL("$DROP_TABLE $NAME_PREFERENCE_TABLE;")
+        sqliteDatabase.execSQL("$DROP_TABLE $NAME_COLOR_TABLE;")
         sqliteDatabase.execSQL("$DROP_TABLE $NAME_PALETTE_TABLE;")
 //        sqliteDatabase.close()
     }
@@ -123,10 +170,62 @@ class Database(
         createTables(sqliteDatabase)
     }
 
-//    fun clearTables() {
-//        dropTables(getDB())
-//        createTables(getDB())
-//    }
+    /*** Preference CRUD methods. ***/
+    fun createPreference(preference: String?, value: Int): String {
+        if(preference!!.isEmpty()) {
+            println("Preferences must have a name!")
+            return "Preferences must have a name!"
+        }
+
+        if(-1 != readPreference(preference)) {
+            return updatePreference(preference, value)
+        }
+
+        val contentValues = ContentValues()
+        contentValues.put(NAME_PREFERENCE, preference)
+        contentValues.put(INT_PREFERENCE, value)
+        val database = writableDatabase
+        database.insert(NAME_PREFERENCE_TABLE, null, contentValues)
+
+        println("Added $preference as $value to the database.")
+        return "Added $preference as $value to the database."
+    }
+
+    fun readPreference(preference: String): Int {
+        val noPreference = -1
+        val query = "SELECT * FROM $NAME_PREFERENCE_TABLE WHERE $NAME_PREFERENCE = '$preference';"
+
+        val database = readableDatabase
+        val cursor = database.rawQuery(query, null)
+
+        println("Cursor: ${cursor.getColumnName(INDEX_PREFERENCE_INT)}, ${cursor.count}")
+        if(null != cursor && cursor.moveToFirst()) {
+            val result = cursor.getInt(INDEX_PREFERENCE_INT)
+            cursor.close()
+            return result
+        }
+
+
+
+        cursor.close()
+        println("No Preference")
+        return noPreference
+    }
+
+    fun updatePreference(preference: String?, value: Int): String {
+        if(preference!!.isEmpty()) {
+            println("Preferences must have a name!")
+            return "Preferences must have a name!"
+        }
+
+        val contentValues = ContentValues()
+        contentValues.put(INT_PREFERENCE, value)
+        val database = writableDatabase
+        database.update(NAME_PREFERENCE_TABLE, contentValues, "$NAME_PREFERENCE = '$preference'", null)
+
+        println("Updated $preference to $value in the database.")
+        return "Updated $preference to $value in the database."
+    }
 
     /*** Palette CRUD methods. ***/
     fun createPalette(name: String?): String {
@@ -143,8 +242,8 @@ class Database(
         val contentValues = ContentValues()
         contentValues.put(NAME_PALETTE, name)
 
-        val sqliteDatabase = this.writableDatabase
-        sqliteDatabase.insert(NAME_PALETTE_TABLE, null, contentValues)
+        val database = writableDatabase
+        database.insert(NAME_PALETTE_TABLE, null, contentValues)
 //        sqliteDatabase.close()
         println("Added $name to the database.")
         return "Added $name to the database."
@@ -152,14 +251,15 @@ class Database(
 
     fun readPalette(id: Int): DBPalette {
         val query = "SELECT * FROM $NAME_PALETTE_TABLE WHERE $PRIMARY_KEY_PALETTE = $id;"
-        val sqliteDatabase = this.readableDatabase
-        val cursor = sqliteDatabase.rawQuery(query, null)
+
+        val database = readableDatabase
+        val cursor = database.rawQuery(query, null)
 
         val dbPalette = DBPalette(0, NOT_FOUND)
         if(null != cursor && cursor.moveToFirst()) {
-            val id = cursor.getInt(INDEX_ID_PALETTE)
+            val idPalette = cursor.getInt(INDEX_ID_PALETTE)
             val name = cursor.getString(INDEX_NAME_PALETTE)
-            dbPalette.id = id
+            dbPalette.id = idPalette
             dbPalette.name = name
         }
         cursor.close()
@@ -169,8 +269,9 @@ class Database(
 
     fun readPalette(name: String): DBPalette {
         val query = "SELECT * FROM $NAME_PALETTE_TABLE WHERE $NAME_PALETTE = '$name';"
-        val sqliteDatabase = this.readableDatabase
-        val cursor = sqliteDatabase.rawQuery(query, null)
+
+        val database = readableDatabase
+        val cursor = database.rawQuery(query, null)
 
         val dbPalette = DBPalette(0, NOT_FOUND)
         if(null != cursor && cursor.moveToFirst()) {
@@ -186,8 +287,8 @@ class Database(
 
     fun readPalettes() : ArrayList<DBPalette> {
         val query = "SELECT * FROM $NAME_PALETTE_TABLE;"
-        val sqliteDatabase = this.readableDatabase
-        val cursor = sqliteDatabase.rawQuery(query, null)
+        val database = writableDatabase
+        val cursor = database.rawQuery(query, null)
 
         val dbPalettes = ArrayList<DBPalette>(1)
         if(null != cursor && cursor.moveToFirst()) {
@@ -219,8 +320,8 @@ class Database(
         val contentValues = ContentValues()
         contentValues.put(NAME_PALETTE, name)
 
-        val sqliteDatabase = this.writableDatabase
-        sqliteDatabase.update(NAME_PALETTE_TABLE, contentValues, "$PRIMARY_KEY_PALETTE = $id", null)
+        val database = writableDatabase
+        database.update(NAME_PALETTE_TABLE, contentValues, "$PRIMARY_KEY_PALETTE = $id", null)
 //        sqliteDatabase.close()
 
         return "Set ${dbPalette.name} to $name in the database."
@@ -233,8 +334,8 @@ class Database(
         }
 
         val query = "DELETE FROM $NAME_PALETTE_TABLE WHERE $PRIMARY_KEY_PALETTE = $id"
-        val sqliteDatabase = this.writableDatabase
-        sqliteDatabase.execSQL(query)
+        val database = writableDatabase
+        database.execSQL(query)
 //        sqliteDatabase.close()
 
         return "Deleted ${dbPalette.name} from the database."
@@ -255,6 +356,7 @@ class Database(
     }
 
     /*** Color CRUD methods. ***/
+    // Create
     fun createColor(name: String, color: Long, idPalette: Int): String {
         val dbPalette = readPalette(idPalette)
         if(NOT_FOUND == dbPalette.name) {
@@ -270,8 +372,8 @@ class Database(
         contentValues.put(INT_COLOR, color)
         contentValues.put(PRIMARY_KEY_PALETTE, idPalette)
 
-        val sqliteDatabase = this.writableDatabase
-        sqliteDatabase.insert(NAME_COLOR_TABLE, null, contentValues)
+        val database = writableDatabase
+        database.insert(NAME_COLOR_TABLE, null, contentValues)
 //        sqliteDatabase.close()
         println("Added $name ($color) to ${dbPalette.name} in the database.")
         return "Added $name ($color) to ${dbPalette.name} in the database."
@@ -292,17 +394,18 @@ class Database(
         contentValues.put(INT_COLOR, dbColor.color)
         contentValues.put(PRIMARY_KEY_PALETTE, idPalette)
 
-        val sqliteDatabase = this.writableDatabase
-        sqliteDatabase.insert(NAME_COLOR_TABLE, null, contentValues)
+        val database = writableDatabase
+        database.insert(NAME_COLOR_TABLE, null, contentValues)
 //        sqliteDatabase.close()
 
         return "Added ${dbColor.color} to ${dbPalette.name} in the database."
     }
 
+    // Read
     fun readColors(idPalette: Int) : ArrayList<DBColor> {
         val query = "SELECT * FROM $NAME_COLOR_TABLE WHERE $PRIMARY_KEY_PALETTE = $idPalette;"
-        val sqliteDatabase = this.readableDatabase
-        val cursor = sqliteDatabase.rawQuery(query, null)
+        val database = writableDatabase
+        val cursor = database.rawQuery(query, null)
 
         val dbColors = ArrayList<DBColor>(1)
         if(null != cursor && cursor.moveToFirst()) {
@@ -317,7 +420,90 @@ class Database(
 //        sqliteDatabase.close()
         return dbColors
     }
+
+    fun readColor(idPalette: Int, color: Long) : DBColor {
+        val dummyColor = DBColor(0, NOT_FOUND, 0, 0)
+        val dbPalette = readPalette(idPalette)
+        if(NOT_FOUND == dbPalette.name) {
+            return dummyColor
+        }
+
+        val colors = readColors(idPalette)
+        for(i in 0 until colors.size) {
+            println(colors[i].color)
+            if(colors[i].color == color) {
+                return colors[i]
+            }
+        }
+        println("No Color $color")
+
+        return dummyColor
+    }
+
+    // Update
+    fun updateColor(idPalette: Int, colorCurrent: Long, colorUpdate: Long): String {
+        val dbPalette = readPalette(idPalette)
+        println(dbPalette.id)
+        println(dbPalette.name)
+        if(NOT_FOUND == dbPalette.name) {
+            return "Unable to find palette."
+        }
+
+        val colorToUpdate = readColor(idPalette, colorCurrent)
+        if(NOT_FOUND == colorToUpdate.name) {
+            println("Unable to find color.")
+            return "Unable to find color."
+        }
+
+        val name = colorNameAsHex(colorUpdate)
+        val contentValues = ContentValues()
+        contentValues.put(NAME_COLOR, name)
+        contentValues.put(INT_COLOR, colorUpdate)
+
+        val database = writableDatabase
+        database.update(NAME_COLOR_TABLE, contentValues, "$PRIMARY_KEY_COLOR = ${colorToUpdate.id}", null)
+//        sqliteDatabase.close()
+
+        println("Set ${colorToUpdate.name} to $name in the database.")
+        return "Set ${colorToUpdate.name} to $name in the database."
+    }
+
+    // Delete
+    fun deleteColor(idPalette: Int, color: Long): String {
+        val dbPalette = readPalette(idPalette)
+        println(dbPalette.id)
+        println(dbPalette.name)
+        if(NOT_FOUND == dbPalette.name) {
+            println("Unable to find palette.")
+            return "Unable to find palette."
+        }
+
+        val colorToDelete = readColor(idPalette, color)
+        if(NOT_FOUND == colorToDelete.name) {
+            println("Unable to find color.")
+            return "Unable to find color."
+        }
+
+        val query = "DELETE FROM $NAME_COLOR_TABLE WHERE $PRIMARY_KEY_COLOR = ${colorToDelete.id}"
+        val database = writableDatabase
+        database.execSQL(query)
+
+        return "Deleted ${colorToDelete.name} from the ${dbPalette.name}."
+    }
+
     /*** Helpers ***/
+    private fun colorIsInPalette(idPalette: Int, idColor: Int) : Boolean {
+        val colorList = readColors(idPalette)
+
+        for(i in 0 until colorList.size) {
+            if(idColor == colorList[i].id) {
+                return true
+            }
+        }
+
+        return false
+    }
+
     fun colorIsInPalette(color: Long, idPalette: Int) : Boolean {
         return !isUnique(color, colorHexes(idPalette))
     }
@@ -358,16 +544,24 @@ class Database(
         return values
     }
 
-    /*** Default palettes ***/
-    fun createDefaultPalettes() {
-        createPaletteRainbow()
-        createPaletteRainbowExtended()
-        coroutineScopeMain.launch {
-            delay(300)
-            populatePaletteRainbow()
-            populatePaletteRainbowExtended()
-        }
+    private fun colorNameAsHex(color: Long) : String {
+        val red = (color shr 16) and 0xFF
+        val green = (color shr 8) and 0xFF
+        val blue = color and 0xFF
+        val formatTemplate = "#%02X%02X%02X"
+        return formatTemplate.format(red, green, blue)
     }
+
+    /*** Default palettes ***/
+//    fun createDefaultPalettes() {
+//        createPaletteRainbow()
+//        createPaletteRainbowExtended()
+//        coroutineScopeMain.launch {
+//            delay(300)
+//            populatePaletteRainbow()
+//            populatePaletteRainbowExtended()
+//        }
+//    }
 
     private fun createPaletteRainbow() {
         createPalette(PALETTE_RAINBOW)

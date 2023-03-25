@@ -8,6 +8,9 @@
         <item>24</item>
         <item>28</item>
         <item>32</item>
+        <item>36</item>
+        <item>40</item>
+        <item>48</item>
         <item>64</item>
     </string-array>
 </resources>

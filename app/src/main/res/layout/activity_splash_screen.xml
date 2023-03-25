@@ -17,7 +17,7 @@
 
     <ImageButton
         android:id="@+id/buttonSettings"
-        android:onClick="dialogSettingsShow"
+        android:onClick="dialogSettings"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_alignParentBottom="true"

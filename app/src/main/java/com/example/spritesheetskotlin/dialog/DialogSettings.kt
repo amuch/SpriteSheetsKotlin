@@ -5,35 +5,47 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.View
 import android.view.Window
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.Spinner
+import android.widget.*
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.preferencesKey
 import androidx.datastore.preferences.createDataStore
-import com.example.spritesheetskotlin.PREFERENCE_DIMENSION
-import com.example.spritesheetskotlin.PREFERENCE_RESOLUTION
-import com.example.spritesheetskotlin.R
+import com.example.spritesheetskotlin.*
+import com.example.spritesheetskotlin.database.Database
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 const val NAME_DATA_STORE = "Settings"
+const val NO_PREFERENCE = "0"
 
-class DialogSettings(activity: Activity): Dialog(activity), AdapterView.OnItemSelectedListener {
+class DialogSettings(activity: Activity, database: Database): Dialog(activity), AdapterView.OnItemSelectedListener {
     private var activity: Activity
     private val coroutineScope = CoroutineScope(Dispatchers.IO)
-    private lateinit var dataStore: DataStore<Preferences>
+//    private var dataStoreManager: DataStoreManager
+    private var database: Database
     private lateinit var spinnerDimensions: Spinner
     private lateinit var spinnerResolution: Spinner
 
     init {
         setCancelable(false)
-        activity.also { this.activity = it }
+        activity.also {
+            this.activity = it
+//            dataStoreManager = DataStoreManager(it.applicationContext)
+        }
+        database.also {
+            this.database = it
+        }
+    }
+
+    companion object {
+        var dimensionPreference : String = NO_PREFERENCE
+        lateinit var dimensionCurrent: String
+        var resolutionPreference: String = NO_PREFERENCE
+        lateinit var resolutionCurrent: String
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,53 +53,68 @@ class DialogSettings(activity: Activity): Dialog(activity), AdapterView.OnItemSe
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.dialog_settings)
 
-        dataStore = activity.createDataStore(name = NAME_DATA_STORE)
+//        coroutineScope.launch {
+//            dimensionCurrent = dataStoreManager.readFromDataStore(PREFERENCE_DIMENSION)!!
+//            resolutionCurrent = dataStoreManager.readFromDataStore(PREFERENCE_RESOLUTION)!!
+//
+//        }
 
-        bindUI()
+
+            bindUI()
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         val selected = parent!!.selectedItem.toString()
-        if(R.id.spinner_image_dimension == parent!!.id) {
-            coroutineScope.launch {
-                saveToDataStore(PREFERENCE_DIMENSION, selected)
-            }
+
+        if (R.id.spinner_image_dimension == parent!!.id) {
+            dimensionPreference = selected
         }
 
-        if(R.id.spinner_image_resolution == parent!!.id) {
-            coroutineScope.launch {
-                saveToDataStore(PREFERENCE_RESOLUTION, selected)
-            }
+        if (R.id.spinner_image_resolution == parent!!.id) {
+            resolutionPreference = selected
         }
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
-        println("No Selection")
+        println("Nothing selected.")
     }
-
-    private suspend fun saveToDataStore(key: String, value: String) {
-        val dataStoreKey = preferencesKey<String>(key)
-        dataStore.edit { settings->
-            settings[dataStoreKey] = value
-        }
-    }
-
-    suspend fun readFromDataStore(key: String): String? {
-        val dataStoreKey = preferencesKey<String>(key)
-        val preferences = dataStore.data.first()
-        return preferences[dataStoreKey]
-    }
-
 
     private fun bindUI() {
         spinnerDimensions = findViewById(R.id.spinner_image_dimension)
         setSpinnerArrayAdapter(spinnerDimensions, R.array.image_dimensions)
 
+//        val dimensionArray = activity.resources.getStringArray(R.array.image_dimensions)
+//        val indexDimensions = currentIndex(dimensionArray, dimensionCurrent)
+        val twentyFourBlocks = 4
+        spinnerDimensions.setSelection(twentyFourBlocks)
+
         spinnerResolution = findViewById(R.id.spinner_image_resolution)
         setSpinnerArrayAdapter(spinnerResolution, R.array.image_resolutions)
 
-        val buttonAccept: Button = findViewById(R.id.button_accept_settings)
-        buttonAccept.setOnClickListener {
+//        val resolutionArray = activity.resources.getStringArray(R.array.image_resolutions)
+//        val indexResolutions = currentIndex(resolutionArray, resolutionCurrent)
+        val fourPixels = 2
+        spinnerResolution.setSelection(fourPixels)
+
+        val imageButtonConfirm = findViewById<ImageButton>(R.id.image_button_settings_confirm)
+        imageButtonConfirm.setOnClickListener {
+            coroutineScope.launch {
+                if(NO_PREFERENCE != dimensionPreference) {
+                    SplashScreenActivity.preferenceDimension = dimensionPreference.toInt()
+                    database.createPreference(PREFERENCE_DIMENSION, dimensionPreference.toInt())
+//                    dataStoreManager.saveToDataStore(PREFERENCE_DIMENSION, dimensionPreference)
+                }
+                if(NO_PREFERENCE != resolutionPreference) {
+                    SplashScreenActivity.preferenceResolution = resolutionPreference.toInt()
+                    database.createPreference(PREFERENCE_RESOLUTION, resolutionPreference.toInt())
+//                    dataStoreManager.saveToDataStore(PREFERENCE_RESOLUTION, resolutionPreference)
+                }
+            }
+            this.cancel()
+        }
+
+        val imageButtonExit = findViewById<ImageButton>(R.id.image_button_settings_exit)
+        imageButtonExit.setOnClickListener {
             this.cancel()
         }
     }
@@ -102,5 +129,14 @@ class DialogSettings(activity: Activity): Dialog(activity), AdapterView.OnItemSe
             spinner.adapter = adapter
         }
         spinner.onItemSelectedListener = this
+    }
+
+    private fun currentIndex(array: Array<String>, value: String) : Int {
+        for(i in 0 until array.size) {
+            if(array[i] == value) {
+                return i
+            }
+        }
+        return 0
     }
 }

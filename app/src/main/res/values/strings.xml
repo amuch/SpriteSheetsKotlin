@@ -32,4 +32,6 @@
     <string name="close">Close</string>
     <string name="duplicate_frame">Duplicate</string>
     <string name="delete_frame">Delete</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
 </resources>

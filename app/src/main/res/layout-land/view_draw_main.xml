@@ -21,7 +21,7 @@
         android:layout_weight="1"
         android:layout_margin="15dp"
         android:layout_gravity="center"
-        android:background="@mipmap/background"
+        android:background="@mipmap/background128"
         tools:ignore="NestedWeights" />
 
 </LinearLayout>

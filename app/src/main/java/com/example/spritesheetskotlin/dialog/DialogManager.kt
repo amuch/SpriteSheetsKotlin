@@ -6,15 +6,17 @@ import android.graphics.Bitmap
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.DrawingViewModel
 import com.example.spritesheetskotlin.bitmap.BitmapManager
+import com.example.spritesheetskotlin.database.Database
 import com.example.spritesheetskotlin.palette.Palette
 
-class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewModel, palette: Palette, bitmapManager: BitmapManager) {
+class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewModel, palette: Palette, bitmapManager: BitmapManager, database: Database) {
     private val drawingActivity: DrawingActivity
     private val dialogManagePalette : DialogManagePalette
     private val dialogSaveBitmap : DialogSaveBitmap
     private val dialogConfirmExit : DialogConfirmExit
     private val dialogConfirmClear: DialogConfirmClear
     private val dialogManageFrame: DialogManageFrame
+    private val dialogSettings: DialogSettings
     private var bitmapManager: BitmapManager
 
     init {
@@ -25,6 +27,7 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
         dialogConfirmExit = DialogConfirmExit(activity)
         dialogConfirmClear = DialogConfirmClear(activity as DrawingActivity)
         dialogManageFrame = DialogManageFrame(activity as DrawingActivity, bitmapManager, drawingViewModel)
+        dialogSettings = DialogSettings(activity, database)
     }
 
 //    fun updateBitmapMain(bitmap: Bitmap) {
@@ -55,6 +58,10 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
 
         if(dialogManageFrame.isShowing) {
             dialogManageFrame.cancel()
+        }
+
+        if(dialogSettings.isShowing) {
+            dialogSettings.cancel()
         }
     }
 
@@ -96,6 +103,13 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
                 dialogManageFrame.show()
                 dialogManageFrame.window?.setLayout(widthDialog, heightDialog)
                 dialogManageFrame.setOnCancelListener {
+                    dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_NONE
+                }
+            }
+            DialogVisibleEnum.DIALOG_SETTINGS -> {
+                dialogSettings.show()
+                dialogSettings.window?.setLayout(widthDialog, heightDialog)
+                dialogSettings.setOnCancelListener {
                     dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_NONE
                 }
             }

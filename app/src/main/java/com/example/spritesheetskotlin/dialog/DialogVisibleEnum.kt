@@ -7,4 +7,5 @@ enum class DialogVisibleEnum {
     DIALOG_CONFIRM_EXIT,
     DIALOG_CONFIRM_CLEAR,
     DIALOG_MANAGE_FRAME,
+    DIALOG_SETTINGS,
 }

@@ -61,18 +61,35 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
         this.dbColorList.add(dbColor)
     }
 
-    fun loadPalette(database: Database, id: Int) {
-        val dbPalette = database.readPalette(id)
+    fun updateColor(oldColor: Long, newColor: Long) {
+        for(i in 0 until this.dbColorList.size) {
+            if(dbColorList[i].color == oldColor) {
+                dbColorList[i].color = newColor
+            }
+        }
+    }
+
+    fun deleteColor(color: Long) {
+        for(i in 0 until this.dbColorList.size) {
+            if(dbColorList[i].color == color) {
+                dbColorList.removeAt(i)
+                break
+            }
+        }
+    }
+
+    fun loadPalette(id: Int) {
+        val dbPalette = DrawingActivity.database.readPalette(id)
         if(!(NOT_FOUND == dbPalette.name)) {
-            val dbColors = database.readColors(dbPalette.id)
+            val dbColors = DrawingActivity.database.readColors(dbPalette.id)
             for(i in 0 until dbColors.size) {
                 this.dbColorList.add(dbColors[i])
             }
         }
     }
 
-    fun initializePalette(database: Database, id: Int) {
-        loadPalette(database, id)
+    fun initializePalette(id: Int) {
+        loadPalette(id)
         if(0 == this.dbColorList.size) {
             println("No colors in selected palette.")
             loadDefaultPalette()
