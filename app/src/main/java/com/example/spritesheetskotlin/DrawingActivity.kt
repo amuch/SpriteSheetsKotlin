@@ -150,57 +150,59 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     private fun performDrawingAction(point: Point) {
-        val points = ArrayList<Point>()
-        points.add(point)
+        coroutineScopeMain.launch {
+            val points = ArrayList<Point>()
+            points.add(point)
 
-        val width = storageBitmap().width
-        if(mirrorHorizontal) {
-            val horizontalMirror = Point(width - point.x - 1, point.y)
-            points.add(horizontalMirror)
-        }
-
-        val height = storageBitmap().height
-        if(mirrorVertical) {
-            val verticalMirror = Point(point.x, height - point.y - 1)
-            points.add(verticalMirror)
-        }
-
-        if(mirrorHorizontal && mirrorVertical) {
-            val doubleMirror = Point(width - point.x - 1, height - point.y - 1)
-            points.add(doubleMirror)
-        }
-
-        when (bitmapViewModel.bitmapAction.value) {
-            BitmapActionEnum.BITMAP_OVERWRITE -> {
-                for(i in 0 until points.size) {
-                    colorPixel(points[i])
-                }
+            val width = storageBitmap().width
+            if (mirrorHorizontal) {
+                val horizontalMirror = Point(width - point.x - 1, point.y)
+                points.add(horizontalMirror)
             }
 
-            BitmapActionEnum.BITMAP_BLEND -> {
-//                bitmapManager.setHasBlended(point)
+            val height = storageBitmap().height
+            if (mirrorVertical) {
+                val verticalMirror = Point(point.x, height - point.y - 1)
+                points.add(verticalMirror)
             }
-            BitmapActionEnum.BITMAP_COLOR -> {
-                for(i in 0 until points.size) {
-                    if(bitmapManager().pointHasZeroAlpha(indexCurrent(), points[i])) {
+
+            if (mirrorHorizontal && mirrorVertical) {
+                val doubleMirror = Point(width - point.x - 1, height - point.y - 1)
+                points.add(doubleMirror)
+            }
+
+            when (bitmapViewModel.bitmapAction.value) {
+                BitmapActionEnum.BITMAP_OVERWRITE -> {
+                    for (i in 0 until points.size) {
                         colorPixel(points[i])
                     }
                 }
-            }
 
-            BitmapActionEnum.BITMAP_FILL -> {
-                for(i in 0 until points.size) {
-                    fillColorPartial(points[i])
+                BitmapActionEnum.BITMAP_BLEND -> {
+                    //                bitmapManager.setHasBlended(point)
                 }
-            }
-
-            BitmapActionEnum.BITMAP_ERASE -> {
-                for(i in 0 until points.size) {
-                    erasePixel(points[i])
+                BitmapActionEnum.BITMAP_COLOR -> {
+                    for (i in 0 until points.size) {
+                        if (bitmapManager().pointHasZeroAlpha(indexCurrent(), points[i])) {
+                            colorPixel(points[i])
+                        }
+                    }
                 }
-            }
 
-            null -> {}
+                BitmapActionEnum.BITMAP_FILL -> {
+                    for (i in 0 until points.size) {
+                        fillColorPartial(points[i])
+                    }
+                }
+
+                BitmapActionEnum.BITMAP_ERASE -> {
+                    for (i in 0 until points.size) {
+                        erasePixel(points[i])
+                    }
+                }
+
+                null -> {}
+            }
         }
     }
 

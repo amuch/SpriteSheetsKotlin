@@ -53,14 +53,11 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
 
-//        dataStoreManager = DataStoreManager(applicationContext)
-
         dialogSettings = DialogSettings(this, database)
 
         readPreferences()
 
         coroutineScopeMain.launch {
-//            delay(DELAY_PREFERENCES)
 
             if (preferenceDimension == PLACEHOLDER_PREFERENCE || preferenceResolution == PLACEHOLDER_PREFERENCE) {
                 dialogSettingsShow()
