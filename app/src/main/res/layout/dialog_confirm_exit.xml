@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background_draw">
+    android:background="@color/lightGray">
 
     <ImageView
         android:layout_width="200dp"
@@ -19,28 +19,28 @@
 
     <ImageButton
         android:id="@+id/image_button_exit_confirm"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:background="@color/translucent"
-        android:src="@mipmap/confirm_open64" />
+        android:src="@mipmap/confirm32" />
 
     <ImageButton
         android:id="@+id/image_button_exit_deny"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="15dp"
+        android:layout_margin="10dp"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:background="@color/translucent"
-        android:src="@mipmap/close_open64" />
+        android:src="@mipmap/close32" />
 
 </RelativeLayout>

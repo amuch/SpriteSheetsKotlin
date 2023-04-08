@@ -1,22 +1,13 @@
 package com.example.spritesheetskotlin
 
-import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
 import android.view.View
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.createDataStore
 import com.example.spritesheetskotlin.database.Database
 import com.example.spritesheetskotlin.dialog.DialogSettings
-import com.example.spritesheetskotlin.palette.Palette
-import com.example.spritesheetskotlin.roomdb.PaletteRoom
-import com.example.spritesheetskotlin.roomdb.PixelArtDatabase
 import kotlinx.coroutines.*
-import kotlin.system.exitProcess
 
 const val DELAY_PREFERENCES : Long = 500
 const val DELAY_SPLASHSCREEN : Long = 2500
@@ -58,6 +49,7 @@ class SplashScreenActivity : AppCompatActivity() {
         readPreferences()
 
         coroutineScopeMain.launch {
+            delay(DELAY_PREFERENCES)
 
             if (preferenceDimension == PLACEHOLDER_PREFERENCE || preferenceResolution == PLACEHOLDER_PREFERENCE) {
                 dialogSettingsShow()
@@ -86,7 +78,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
         runOnUiThread {
             dialogSettings.show()
-            dialogSettings.window?.setLayout(widthDialog, heightDialog)
+            dialogSettings.window?.setLayout(sideDialog, sideDialog)
             dialogSettings.setOnCancelListener {
                 launchDrawingActivityDefault()
             }
@@ -106,10 +98,10 @@ class SplashScreenActivity : AppCompatActivity() {
     private fun launchDrawingActivityDefault() {
         readPreferences()
         if(PLACEHOLDER_PREFERENCE == preferenceDimension) {
-            preferenceDimension = 24
+            preferenceDimension = SPRITE_DIMENSION_DEFAULT
         }
         if(PLACEHOLDER_PREFERENCE == preferenceResolution) {
-            preferenceResolution = 4
+            preferenceResolution = SPRITE_RESOLUTION_DEFAULT
         }
         launchDrawingActivity(preferenceDimension, preferenceResolution)
     }

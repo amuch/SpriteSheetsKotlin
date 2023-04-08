@@ -1,10 +1,9 @@
 package com.example.spritesheetskotlin
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.res.Configuration
+import android.content.pm.PackageManager
 import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Gravity
@@ -12,10 +11,9 @@ import android.view.MotionEvent
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.graphics.toColorInt
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.createDataStore
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.spritesheetskotlin.bitmap.BitmapActionEnum
 import com.example.spritesheetskotlin.bitmap.BitmapManager
@@ -26,7 +24,6 @@ import com.example.spritesheetskotlin.dialog.*
 import com.example.spritesheetskotlin.palette.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.max
 import kotlin.system.exitProcess
@@ -34,21 +31,21 @@ import kotlin.system.exitProcess
 const val IMAGE_BUTTON_FRAME_BASE = 1000
 const val SPRITE_DIMENSION_DEFAULT = 32
 const val SPRITE_RESOLUTION_DEFAULT = 8
+const val REQUEST_CODE_WRITE_EXTERNAL_STORAGE = 100
 
 class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
-//    lateinit var database: Database
     private val coroutineScopeMain = CoroutineScope(Dispatchers.Main)
+
     var spriteWidth = SPRITE_DIMENSION_DEFAULT as Int
     var spriteHeight = SPRITE_DIMENSION_DEFAULT as Int
     var resolution: Int = SPRITE_RESOLUTION_DEFAULT
-//    val dataStoreManager = DataStoreManager(this)
+
     lateinit var imageViewMain: ImageView
     lateinit var drawingViewModelFactory: DrawingViewModelFactory
     lateinit var drawingViewModel : DrawingViewModel
     lateinit var dialogViewModel: DialogViewModel
     lateinit var paletteViewModel: PaletteViewModel
     lateinit var paletteViewModelFactory: PaletteViewModelFactory
-//    lateinit var bitmapManager: BitmapManager // = BitmapManager()
     lateinit var bitmapViewModel: BitmapViewModel
     lateinit var dialogManager : DialogManager
 
@@ -64,7 +61,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     private lateinit var imageButtonBitmapActionOverwrite: ImageButton
     private lateinit var imageButtonBitmapActionMirrorHorizontal: ImageButton
     private lateinit var imageButtonBitmapActionMirrorVertical: ImageButton
-
     private lateinit var imageButtonManageFrame: ImageButton
 
     companion object {
@@ -88,33 +84,20 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_drawing)
-//        database = Database(this)
 
         resolution = intent.getIntExtra(PREFERENCE_RESOLUTION, SPRITE_RESOLUTION_DEFAULT)
         spriteWidth = intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)
         spriteHeight = intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)
-        println("Drawing Resolution: ${intent.getIntExtra(PREFERENCE_RESOLUTION, SPRITE_RESOLUTION_DEFAULT)}")
-//        println("Stored Resolution ${dataStoreManager.readPreference(PREFERENCE_RESOLUTION)}")
-        println("Drawing Dimension: ${intent.getIntExtra(PREFERENCE_DIMENSION, SPRITE_DIMENSION_DEFAULT)}")
-//        println("Stored Dimension ${dataStoreManager.readPreference(PREFERENCE_DIMENSION)}")
 
 //        bindUI(intent.getStringExtra("nameProject").toString())
         bindUI()
+        showDialog()
     }
 
-    override fun onSaveInstanceState(bundle: Bundle) {
-        super.onSaveInstanceState(bundle)
-
-        if(dialogViewModel.dialogVisible.value == DialogVisibleEnum.DIALOG_NONE) {
-            dialogManager.closeDialogs()
-        }
+    override fun onDestroy() {
+        dialogManager.closeDialogs()
+        super.onDestroy()
     }
-
-//    override fun onDestroy() {
-//        println("Destroy")
-//        dialogManager.closeDialogs()
-//        super.onDestroy()
-//    }
 
     override fun onRestoreInstanceState(bundle: Bundle) {
         super.onRestoreInstanceState(bundle)
@@ -127,7 +110,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     private fun showDialog() {
-        dialogManager.showDialog(dialogViewModel)
+        dialogManager.showDialog()
     }
 
     /** Drawing methods **/
@@ -181,6 +164,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                 BitmapActionEnum.BITMAP_BLEND -> {
                     //                bitmapManager.setHasBlended(point)
                 }
+
                 BitmapActionEnum.BITMAP_COLOR -> {
                     for (i in 0 until points.size) {
                         if (bitmapManager().pointHasZeroAlpha(indexCurrent(), points[i])) {
@@ -443,7 +427,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     imageButtonBitmapActionFill.setBackgroundColor(Palette().colorInt(it))
                     imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
                 }
-                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.fill64)
+                val bitMapFill: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.fill32)
                 imageButtonManageTools.setImageBitmap(bitMapFill)
 
             }
@@ -458,12 +442,12 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     imageButtonBitmapActionOverwrite.setBackgroundColor(Palette().colorInt(it))
                     imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
                 }
-                val bitmapOverwrite: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.overwrite)
+                val bitmapOverwrite: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.overwrite32)
                 imageButtonManageTools.setImageBitmap(bitmapOverwrite)
             }
 
             BitmapActionEnum.BITMAP_ERASE -> {
-                val bitmapEraser: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.erase)
+                val bitmapEraser: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.erase32)
                 imageButtonManageTools.setBackgroundColor(Palette().colorInt(COLOR_CLEAR))
                 imageButtonManageTools.setImageBitmap(bitmapEraser)
             }
@@ -474,7 +458,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                     imageButtonManageTools.setBackgroundColor(Palette().colorInt(it))
                     imageButtonBitmapActionDraw.setBackgroundColor(Palette().colorInt(it))
                 }
-                val bitmapDraw: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.draw)
+                val bitmapDraw: Bitmap = BitmapFactory.decodeResource(resources, R.mipmap.draw32)
                 imageButtonManageTools.setImageBitmap(bitmapDraw)
             }
         }
@@ -500,6 +484,55 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     /** Settings operation **/
+    private fun checkPermissions(permission: String, name: String, requestCode: Int) {
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M - 1) {
+            when {
+                ContextCompat.checkSelfPermission(applicationContext, permission) == PackageManager.PERMISSION_GRANTED -> {
+                    println("Permission Accepted")
+                }
+                shouldShowRequestPermissionRationale(permission) -> {
+                    println("Permission show dialog")
+                    showPermissionDialog(permission, name, requestCode)
+                }
+                else -> {
+                    println("Permission request")
+                    ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
+                }
+            }
+        }
+
+    }
+
+    private fun showPermissionDialog(permission: String, name: String, requestCode: Int) {
+        val builder = AlertDialog.Builder(this)
+
+        builder.apply {
+            setMessage("Permission to access $name is required to save an image")
+            setTitle("Permission Required")
+            setPositiveButton("OK") {dialog, which ->
+                ActivityCompat.requestPermissions(this@DrawingActivity, arrayOf(permission), requestCode)
+            }
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        fun innerCheck(name: String) {
+            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(applicationContext, R.string.write_external_storage_denied, Toast.LENGTH_LONG)
+            }
+//            else {
+//                Toast.makeText(applicationContext, "Accepted", Toast.LENGTH_LONG)
+//            }
+        }
+
+        when (requestCode) {
+            REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> innerCheck("External Storage")
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
+
     private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         isGranted ->
             if(isGranted) {
@@ -510,7 +543,10 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
                 Toast.makeText(applicationContext, R.string.write_external_storage_denied, Toast.LENGTH_LONG).show()
             }
     }
+
     fun dialogSaveBitmap(view: View) {
+        println("Save bitmap clicked.")
+//        checkPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, "External Storage", REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
         activityResultLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 
@@ -521,7 +557,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
 
     /** Helper methods **/
     @SuppressLint("ClickableViewAccessibility")
-    private fun bindUI(projectName: String = "Pixel Fart") {
+    private fun bindUI(projectName: String = "Pixel Art") {
         initializeUIImages()
         initializeViewModels()
         initializeButtons()
@@ -611,11 +647,11 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     private fun initializeDialogManager() {
-        dialogManager = drawingViewModel.bitmapMain.value?.let {
-            DialogManager(this, drawingViewModel, paletteViewModel.palette.value!!, bitmapManager(), database)
-        }!!
-
         dialogViewModel = ViewModelProvider(this).get(DialogViewModel::class.java)
         dialogViewModel.dialogVisible.observe(this) {}
+
+        dialogManager = drawingViewModel.bitmapMain.value?.let {
+            DialogManager(this, drawingViewModel, paletteViewModel, dialogViewModel, bitmapManager(), database)
+        }!!
     }
 }

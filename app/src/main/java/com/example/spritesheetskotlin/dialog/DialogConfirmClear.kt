@@ -4,13 +4,16 @@ import android.app.Dialog
 import android.os.Bundle
 import android.view.Window
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 
 class DialogConfirmClear(activity: DrawingActivity): Dialog(activity) {
     private var activity: DrawingActivity
-    private lateinit var buttonConfirmClearTrue: Button
-    private lateinit var buttonConfirmClearFalse: Button
+    private lateinit var imageButtonAccept: ImageButton
+    private lateinit var imageButtonCancel: ImageButton
+    private lateinit var imageViewCurrent: ImageView
 
     init {
         setCancelable(false)
@@ -25,15 +28,24 @@ class DialogConfirmClear(activity: DrawingActivity): Dialog(activity) {
         bindUI()
     }
 
+    override fun show() {
+        super.show()
+        imageViewCurrent = findViewById(R.id.dialogConfirmClearImageViewCurrent)
+        imageViewCurrent.setImageBitmap(activity.bitmapMain())
+    }
+
     private fun bindUI() {
-        buttonConfirmClearTrue = findViewById(R.id.button_confirm_clear_true)
-        buttonConfirmClearTrue.setOnClickListener {
+        imageViewCurrent = findViewById(R.id.dialogConfirmClearImageViewCurrent)
+        imageViewCurrent.setImageBitmap(activity.bitmapMain())
+
+        imageButtonAccept = findViewById(R.id.imageButtonConfirmClearAccept)
+        imageButtonAccept.setOnClickListener {
             activity.clearBitmap()
             this.cancel()
         }
 
-        buttonConfirmClearFalse = findViewById(R.id.button_confirm_clear_false)
-        buttonConfirmClearFalse.setOnClickListener {
+        imageButtonCancel = findViewById(R.id.imageButtonConfirmClearClose)
+        imageButtonCancel.setOnClickListener {
             this.cancel()
         }
     }

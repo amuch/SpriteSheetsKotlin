@@ -44,33 +44,35 @@
         android:orientation="vertical"
         android:background="@color/lightGray">
 
-        <Button
-            android:id="@+id/dialogManageFrameButtonDuplicate"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@string/duplicate_frame"/>
+        <include layout="@layout/view_manage_frame_buttons" />
 
-        <Button
-            android:id="@+id/dialogManageFrameButtonAdd"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@string/add_frame"/>
+<!--        <Button-->
+<!--            android:id="@+id/dialogManageFrameButtonDuplicate"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:text="@string/duplicate_frame"/>-->
 
-        <Button
-            android:id="@+id/dialogManageFrameButtonDelete"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@string/delete_frame"/>
+<!--        <Button-->
+<!--            android:id="@+id/dialogManageFrameButtonAdd"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:text="@string/add_frame"/>-->
 
-        <Button
-            android:id="@+id/dialogManageFrameButtonClose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10sp"
-            android:text="@string/close"/>
+<!--        <Button-->
+<!--            android:id="@+id/dialogManageFrameButtonDelete"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:text="@string/delete_frame"/>-->
+
+<!--        <Button-->
+<!--            android:id="@+id/dialogManageFrameButtonClose"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_margin="10sp"-->
+<!--            android:text="@string/close"/>-->
 
     </LinearLayout>
 

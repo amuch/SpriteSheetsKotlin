@@ -1,18 +1,17 @@
 package com.example.spritesheetskotlin.dialog
 
-import android.app.Activity
 import android.content.res.Resources
-import android.graphics.Bitmap
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.DrawingViewModel
 import com.example.spritesheetskotlin.bitmap.BitmapManager
 import com.example.spritesheetskotlin.database.Database
-import com.example.spritesheetskotlin.palette.Palette
+import com.example.spritesheetskotlin.palette.PaletteViewModel
 
-class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewModel, palette: Palette, bitmapManager: BitmapManager, database: Database) {
+class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewModel, paletteViewModel: PaletteViewModel, dialogViewModel: DialogViewModel, bitmapManager: BitmapManager, database: Database) {
     private val drawingActivity: DrawingActivity
     private val dialogManagePalette : DialogManagePalette
     private val dialogSaveBitmap : DialogSaveBitmap
+    private val dialogViewModel : DialogViewModel
     private val dialogConfirmExit : DialogConfirmExit
     private val dialogConfirmClear: DialogConfirmClear
     private val dialogManageFrame: DialogManageFrame
@@ -22,7 +21,8 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
     init {
         activity.also { this.drawingActivity = it }
         bitmapManager.also { this.bitmapManager = it }
-        dialogManagePalette = DialogManagePalette(activity as DrawingActivity, palette)
+        dialogViewModel.also { this.dialogViewModel = it }
+        dialogManagePalette = DialogManagePalette(activity as DrawingActivity, paletteViewModel)
         dialogSaveBitmap = DialogSaveBitmap(activity as DrawingActivity, drawingViewModel)
         dialogConfirmExit = DialogConfirmExit(activity)
         dialogConfirmClear = DialogConfirmClear(activity as DrawingActivity)
@@ -30,42 +30,33 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
         dialogSettings = DialogSettings(activity, database)
     }
 
-//    fun updateBitmapMain(bitmap: Bitmap) {
-//        if(dialogSaveBitmap.isShowing) {
-//            dialogSaveBitmap.updateBitmap(bitmap)
-//        }
-//        if(dialogManageFrame.isShowing) {
-//            dialogManageFrame.updateBitmap(bitmap)
-//        }
-//    }
-
     fun closeDialogs() {
         if(dialogManagePalette.isShowing) {
-            dialogManagePalette.cancel()
+            dialogManagePalette.dismiss()
         }
 
         if(dialogSaveBitmap.isShowing) {
-            dialogSaveBitmap.cancel()
+            dialogSaveBitmap.dismiss()
         }
 
         if(dialogConfirmExit.isShowing) {
-            dialogConfirmExit.cancel()
+            dialogConfirmExit.dismiss()
         }
 
         if(dialogConfirmClear.isShowing) {
-            dialogConfirmClear.cancel()
+            dialogConfirmClear.dismiss()
         }
 
         if(dialogManageFrame.isShowing) {
-            dialogManageFrame.cancel()
+            dialogManageFrame.dismiss()
         }
 
         if(dialogSettings.isShowing) {
-            dialogSettings.cancel()
+            dialogSettings.dismiss()
         }
     }
 
-    fun showDialog(dialogViewModel: DialogViewModel) {
+    fun showDialog() {
         val widthDialog: Int = Resources.getSystem().displayMetrics.widthPixels * 9 / 10
         val heightDialog: Int = Resources.getSystem().displayMetrics.heightPixels * 9 / 10
         val sideDialog = Integer.min(widthDialog, heightDialog)
@@ -80,7 +71,7 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
             }
             DialogVisibleEnum.DIALOG_SAVE_BITMAP -> {
                 dialogSaveBitmap.show()
-                dialogSaveBitmap.window?.setLayout(widthDialog, heightDialog)
+                dialogSaveBitmap.window?.setLayout(sideDialog, sideDialog)
                 dialogSaveBitmap.setOnCancelListener {
                     dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_NONE
                 }

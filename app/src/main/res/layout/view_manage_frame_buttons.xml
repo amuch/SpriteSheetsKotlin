@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/dialogManageFrameLinearLayoutDuplicate"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@color/translucent"
+            android:src="@mipmap/plusgreen32" />
+
+        <ImageView
+            android:id="@+id/dialogManageFrameImageViewDuplicate"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@mipmap/background" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dialogManageFrameLinearLayoutAdd"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/dialogManageFrameLinearLayoutDuplicate"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@color/translucent"
+            android:src="@mipmap/plusgreen32" />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@color/translucent"
+            android:src="@mipmap/background" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dialogManageFrameLinearLayoutDelete"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_below="@+id/dialogManageFrameLinearLayoutAdd"
+        android:layout_alignParentStart="true"
+        android:layout_margin="10dp"
+        android:orientation="horizontal" >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@color/translucent"
+            android:src="@mipmap/trash_open32" />
+
+        <ImageView
+            android:id="@+id/dialogManageFrameImageViewDelete"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@mipmap/background" />
+
+    </LinearLayout>
+
+    <ImageButton
+        android:id="@+id/dialogManageFrameImageButtonClose"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="10dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:background="@color/translucent"
+        android:src="@mipmap/close32" />
+
+</RelativeLayout>

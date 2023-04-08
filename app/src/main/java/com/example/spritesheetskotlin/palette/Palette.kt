@@ -11,7 +11,6 @@ import androidx.core.graphics.green
 import androidx.core.graphics.red
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
-import com.example.spritesheetskotlin.database.Database
 import com.example.spritesheetskotlin.database.NOT_FOUND
 
 const val COLOR_CLEAR : Long = 0x00000000
@@ -51,7 +50,8 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
         val blue = color.blue
         val bitmap: Bitmap = BitmapFactory.decodeResource(
             resources,
-            if((red + green + blue) < (127 * 3)) R.mipmap.palette_white_full else R.mipmap.palette_black_full
+//            if((red + green + blue) < (127 * 3)) R.mipmap.palette_white_full else R.mipmap.palette_black_full
+        R.mipmap.palette_colors
         )
         imageButton.setImageBitmap(bitmap)
     }

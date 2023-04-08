@@ -2,74 +2,72 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/gradient_background_draw">
+    android:background="@color/lightGray">
 
-    <TextView
-        android:id="@+id/text_view_dialog_confirm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+    <LinearLayout
+        android:id="@+id/dialogConfirmClearLinearLayout"
+        android:layout_width="270dp"
+        android:layout_height="90dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_margin="30dp"
-        android:textSize="22sp"
-        android:text="@string/text_view_confirm_clear" />
-<!--    <LinearLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_alignParentTop="true"-->
-<!--        android:layout_centerHorizontal="true"-->
-<!--        android:gravity="center"-->
-<!--        android:layout_margin="30dp"-->
-<!--        android:orientation="horizontal">-->
+        android:layout_marginTop="60dp"
+        android:orientation="horizontal" >
 
-<!--        <ImageView-->
-<!--            android:id="@+id/imageViewDialogConfirmClear"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:gravity="center"-->
-<!--            android:background="@mipmap/background" />-->
+        <ImageView
+            android:id="@+id/dialogConfirmClearImageViewCurrent"
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@mipmap/background" />
 
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:gravity="center"-->
-<!--            android:background="@mipmap/arrow_right" />-->
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@color/translucent"
+            android:src="@mipmap/arrow_right" />
 
-<!--        <ImageView-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:gravity="center"-->
-<!--            android:background="@mipmap/background16" />-->
+        <ImageView
+            android:layout_width="90dp"
+            android:layout_height="90dp"
+            android:layout_margin="0dp"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center"
+            android:background="@mipmap/background" />
 
-<!--    </LinearLayout>-->
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button_confirm_clear_true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/imageButtonConfirmClearAccept"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
-        android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:text="@string/button_confirm_exit_true" />
+        android:layout_margin="10dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:background="@color/translucent"
+        android:src="@mipmap/confirm32" />
 
-    <Button
-        android:id="@+id/button_confirm_clear_false"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/imageButtonConfirmClearClose"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
-        android:layout_margin="20dp"
-        android:textSize="20sp"
-        android:text="@string/button_confirm_exit_false" />
-
-
+        android:layout_margin="10dp"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_gravity="center"
+        android:background="@color/translucent"
+        android:src="@mipmap/close32" />
 
 </RelativeLayout>

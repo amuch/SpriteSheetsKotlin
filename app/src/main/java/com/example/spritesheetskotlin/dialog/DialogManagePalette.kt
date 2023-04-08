@@ -2,21 +2,29 @@ package com.example.spritesheetskotlin.dialog
 
 import android.app.Dialog
 import android.graphics.Color
-import android.graphics.ColorSpace
 import android.os.Bundle
 import android.view.Window
 import android.widget.*
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
+import androidx.core.graphics.toColorInt
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.palette.Palette
+import com.example.spritesheetskotlin.palette.PaletteViewModel
 
-class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(activity) {
-    private var palette: Palette
+class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteViewModel): Dialog(activity) {
+    private var paletteViewModel: PaletteViewModel
     private var activity: DrawingActivity
-    private lateinit var buttonClose: Button
-    private lateinit var buttonAccept: Button
-    private lateinit var buttonUpdate: Button
-    private lateinit var buttonDelete: Button
+    private lateinit var imageButtonClose: ImageButton
+    private lateinit var linearLayoutAdd: LinearLayout
+    private lateinit var imageViewAdd: ImageView
+    private lateinit var linearLayoutUpdate: LinearLayout
+    private lateinit var imageViewUpdateBegin : ImageView
+    private lateinit var imageViewUpdateEnd: ImageView
+    private lateinit var linearLayoutDelete: LinearLayout
+    private lateinit var imageViewDelete: ImageView
     private lateinit var textViewRGB: TextView
     private lateinit var textViewHex: TextView
     private lateinit var seekBarRed: SeekBar
@@ -30,7 +38,14 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
 
     init {
         setCancelable(false)
-        palette.also { this.palette = it }
+        paletteViewModel.also {
+            this.paletteViewModel = it
+            this.colorToUpdate = paletteViewModel.currentColor.value
+            this.red = Palette().colorInt(this.colorToUpdate!!)
+            this.green = Palette().colorInt(this.colorToUpdate!!)
+            this.blue = Palette().colorInt(this.colorToUpdate!!)
+            println("$red $green $blue")
+        }
         activity.also { this.activity = it }
     }
 
@@ -42,6 +57,14 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         bindUI()
     }
 
+    override fun show() {
+        super.show()
+        this.colorToUpdate = paletteViewModel.currentColor.value
+        this.red = Palette().colorInt(this.colorToUpdate!!)
+        this.green = Palette().colorInt(this.colorToUpdate!!)
+        this.blue = Palette().colorInt(this.colorToUpdate!!)
+        println("Show")
+    }
     private fun textFromComponents(redComponent : Int, greenComponent: Int, blueComponent:Int) : Int {
         if((redComponent + greenComponent + blueComponent) < (127 * 3)) {
             return Color.WHITE
@@ -50,8 +73,8 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
     }
 
     private fun setButtonAcceptColor() {
-        buttonAccept.setTextColor(textFromComponents(red, green, blue))
-        buttonAccept.setBackgroundColor(Color.argb(0xFF, red, green, blue))
+        imageViewAdd.setBackgroundColor(Color.argb(0xFF, red, green, blue))
+        imageViewUpdateEnd.setBackgroundColor(Color.argb(0xFF, red, green, blue))
     }
 
     private fun setUpdateButtonColor() {
@@ -61,8 +84,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
 
         val textColor = textFromComponents(redSelected!!.toInt(), greenSelected!!.toInt(), blueSelected!!.toInt() )
 
-        buttonUpdate.setTextColor(textColor)
-        buttonUpdate.setBackgroundColor(colorToUpdate!!.toInt())
+        imageViewUpdateBegin.setBackgroundColor(colorToUpdate!!.toInt())
     }
 
     private fun setDeleteButtonColor() {
@@ -72,8 +94,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
 
         val textColor = textFromComponents(redSelected!!.toInt(), greenSelected!!.toInt(), blueSelected!!.toInt() )
 
-        buttonDelete.setTextColor(textColor)
-        buttonDelete.setBackgroundColor(colorToUpdate!!.toInt())
+        imageViewDelete.setBackgroundColor(colorToUpdate!!.toInt())
     }
 
     private fun setTextViewRGB() {
@@ -100,19 +121,24 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         textViewRGB = findViewById<TextView>(R.id.textViewDialogColorRGB)
         textViewHex = findViewById<TextView>(R.id.textViewDialogColorHex)
 
-        buttonClose = findViewById<Button>(R.id.dialogManagePaletteButtonClose)
-        buttonClose.setOnClickListener {
+        imageViewAdd = findViewById(R.id.dialogManagePaletteImageViewAdd)
+        imageViewUpdateBegin = findViewById(R.id.dialogManagePaletteImageViewUpdateBegin)
+        imageViewUpdateEnd = findViewById(R.id.dialogManagePaletteImageViewUpdateEnd)
+        imageViewDelete = findViewById(R.id.dialogManagePaletteImageViewDelete)
+
+        imageButtonClose = findViewById(R.id.dialogManagePaletteImageButtonClose)
+        imageButtonClose.setOnClickListener {
             this.cancel()
         }
 
-        buttonUpdate = findViewById(R.id.dialogManagePaletteButtonUpdate)
-        buttonUpdate.setOnClickListener {
+        linearLayoutUpdate = findViewById<LinearLayout>(R.id.dialogManagePaletteLinearLayoutUpdate)
+        linearLayoutUpdate.setOnClickListener {
             if(null != this.colorToUpdate) {
                 val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
 
                 val color = Color.argb(0xFF, red, green, blue)
                 DrawingActivity.database.updateColor(dbPalette.id, colorToUpdate!!, color.toLong())
-                palette.updateColor(this.colorToUpdate!!, color.toLong())
+                paletteViewModel.palette.value!!.updateColor(this.colorToUpdate!!, color.toLong())
                 activity.displayPalette()
                 displayPalette()
 
@@ -121,15 +147,15 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
             this.cancel()
         }
 
-        buttonAccept = findViewById<Button>(R.id.dialogManagePaletteButtonAccept)
-        buttonAccept.setOnClickListener {
+        linearLayoutAdd = findViewById(R.id.dialogManagePaletteLinearLayoutAdd)
+        linearLayoutAdd.setOnClickListener {
 
             val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
 
             val color = Color.argb(0xFF, red, green, blue)
             if(!DrawingActivity.database.colorIsInPalette(color.toLong(), dbPalette.id)) {
                 DrawingActivity.database.createColor(name, color.toLong(), dbPalette.id)
-                palette.addColor(color.toLong())
+                paletteViewModel.palette.value!!.addColor(color.toLong())
                 activity.displayPalette()
                 displayPalette()
             }
@@ -137,13 +163,13 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
             this.cancel()
         }
 
-        buttonDelete = findViewById(R.id.dialogManagePaletteButtonDelete)
-        buttonDelete.setOnClickListener {
+        linearLayoutDelete = findViewById(R.id.dialogManagePaletteLinearLayoutDelete)
+        linearLayoutDelete.setOnClickListener {
             if(null != this.colorToUpdate) {
-                if(palette.dbColorList.size > 0) {
+                if(paletteViewModel.palette.value!!.dbColorList.size > 0) {
                     val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
                     DrawingActivity.database.deleteColor(dbPalette.id, colorToUpdate!!)
-                    palette.deleteColor(this.colorToUpdate!!)
+                    paletteViewModel.palette.value!!.deleteColor(this.colorToUpdate!!)
                     activity.displayPalette()
                     displayPalette()
                 }
@@ -153,6 +179,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         }
 
         seekBarRed = findViewById(R.id.seekBarRed)
+//        seekBarRed.progress = this.red
         seekBarRed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 red = progress
@@ -162,6 +189,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarGreen = findViewById(R.id.seekBarGreen)
+//        seekBarGreen.progress = this.green
         seekBarGreen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 green = progress
@@ -171,6 +199,7 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarBlue = findViewById(R.id.seekBarBlue)
+//        seekBarBlue.progress = this.blue
         seekBarBlue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 blue = progress
@@ -187,8 +216,8 @@ class DialogManagePalette(activity: DrawingActivity, palette: Palette): Dialog(a
         val linearLayout: LinearLayout = findViewById(R.id.dialogPaletteColors)
         linearLayout.removeAllViews()
 
-        for(i in 0 until palette.dbColorList.size) {
-            val color = palette.dbColorList[i].color
+        for(i in 0 until paletteViewModel.palette.value!!.dbColorList.size) {
+            val color = paletteViewModel.palette.value!!.dbColorList[i].color
             val imageButton = activity.createPaletteImageButton(color, paletteButtonAction)
             linearLayout.addView(imageButton)
         }

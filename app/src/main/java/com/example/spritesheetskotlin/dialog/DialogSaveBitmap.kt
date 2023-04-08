@@ -1,9 +1,7 @@
 package com.example.spritesheetskotlin.dialog
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.ContentValues
-import android.content.res.Resources
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
@@ -11,7 +9,6 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.Window
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.Toast
@@ -26,7 +23,7 @@ class DialogSaveBitmap(activity: DrawingActivity, drawingViewModel: DrawingViewM
     private var drawingViewModel: DrawingViewModel
     lateinit var imageViewSave: ImageView
     private lateinit var imageButtonSave: ImageButton
-    private lateinit var buttonCancel: Button
+    private lateinit var imageButtonClose: ImageButton
 
     init {
         setCancelable(false)
@@ -94,39 +91,20 @@ class DialogSaveBitmap(activity: DrawingActivity, drawingViewModel: DrawingViewM
         }
 
         Toast.makeText(activity.applicationContext, "Saved $fileName in $saveLocation", Toast.LENGTH_LONG).show()
-
-//        val byteArrayOutputStream = ByteArrayOutputStream()
-//        bitmap.compress(Bitmap.CompressFormat.PNG, 60, byteArrayOutputStream)
-//
-//        val random = Random()
-//        val randomCharacters = generateRandomString(random, "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 6)
-//        val fileName = "$randomCharacters.png"
-//
-//        val fileOutputStream = FileOutputStream("/Android/data/${R.string.app_name}/$fileName")
-//        var fileSaveResult = "Saved $fileName to ${fileOutputStream.toString()}"
-//        try {
-//            fileOutputStream.write(byteArrayOutputStream.toByteArray())
-//            fileOutputStream.close()
-//        }
-//        catch(exception: Exception) {
-//            exception.printStackTrace()
-//            fileSaveResult = "Unable to save: ${exception.toString()}"
-//        }
-//        Toast.makeText(activity.applicationContext, fileSaveResult, Toast.LENGTH_LONG).show()
     }
 
     private fun bindUI() {
         imageViewSave = findViewById(R.id.imageViewDialogBitmapSave)
         imageViewSave.setImageBitmap(this.drawingViewModel.bitmapMain.value!!)
 
-        imageButtonSave = findViewById<ImageButton>(R.id.buttonDialogBitmapSaveConfirm)
+        imageButtonSave = findViewById<ImageButton>(R.id.imageButtonDialogBitmapSaveConfirm)
         imageButtonSave.setOnClickListener {
             writeBitmap()
             this.cancel()
         }
 
-        buttonCancel = findViewById<Button>(R.id.buttonDialogBitmapSaveCancel)
-        buttonCancel.setOnClickListener {
+        imageButtonClose = findViewById<ImageButton>(R.id.imageButtonDialogBitmapSaveClose)
+        imageButtonClose.setOnClickListener {
             this.cancel()
         }
 
