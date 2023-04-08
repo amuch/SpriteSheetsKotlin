@@ -3,12 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:background="@color/white">
+    android:background="@color/lightGray">
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:layout_margin="10dp"
         android:scrollbars="none">
 
         <LinearLayout
@@ -45,34 +46,6 @@
         android:background="@color/lightGray">
 
         <include layout="@layout/view_manage_frame_buttons" />
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManageFrameButtonDuplicate"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10sp"-->
-<!--            android:text="@string/duplicate_frame"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManageFrameButtonAdd"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10sp"-->
-<!--            android:text="@string/add_frame"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManageFrameButtonDelete"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10sp"-->
-<!--            android:text="@string/delete_frame"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManageFrameButtonClose"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10sp"-->
-<!--            android:text="@string/close"/>-->
 
     </LinearLayout>
 

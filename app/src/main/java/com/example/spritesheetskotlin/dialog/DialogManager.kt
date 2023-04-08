@@ -99,7 +99,7 @@ class DialogManager(activity : DrawingActivity, drawingViewModel: DrawingViewMod
             }
             DialogVisibleEnum.DIALOG_SETTINGS -> {
                 dialogSettings.show()
-                dialogSettings.window?.setLayout(widthDialog, heightDialog)
+                dialogSettings.window?.setLayout(sideDialog, sideDialog)
                 dialogSettings.setOnCancelListener {
                     dialogViewModel.dialogVisible.value = DialogVisibleEnum.DIALOG_NONE
                 }

@@ -484,55 +484,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     /** Settings operation **/
-    private fun checkPermissions(permission: String, name: String, requestCode: Int) {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M - 1) {
-            when {
-                ContextCompat.checkSelfPermission(applicationContext, permission) == PackageManager.PERMISSION_GRANTED -> {
-                    println("Permission Accepted")
-                }
-                shouldShowRequestPermissionRationale(permission) -> {
-                    println("Permission show dialog")
-                    showPermissionDialog(permission, name, requestCode)
-                }
-                else -> {
-                    println("Permission request")
-                    ActivityCompat.requestPermissions(this, arrayOf(permission), requestCode)
-                }
-            }
-        }
-
-    }
-
-    private fun showPermissionDialog(permission: String, name: String, requestCode: Int) {
-        val builder = AlertDialog.Builder(this)
-
-        builder.apply {
-            setMessage("Permission to access $name is required to save an image")
-            setTitle("Permission Required")
-            setPositiveButton("OK") {dialog, which ->
-                ActivityCompat.requestPermissions(this@DrawingActivity, arrayOf(permission), requestCode)
-            }
-        }
-        val dialog = builder.create()
-        dialog.show()
-    }
-
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
-        fun innerCheck(name: String) {
-            if(grantResults.isEmpty() || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(applicationContext, R.string.write_external_storage_denied, Toast.LENGTH_LONG)
-            }
-//            else {
-//                Toast.makeText(applicationContext, "Accepted", Toast.LENGTH_LONG)
-//            }
-        }
-
-        when (requestCode) {
-            REQUEST_CODE_WRITE_EXTERNAL_STORAGE -> innerCheck("External Storage")
-        }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-    }
-
     private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
         isGranted ->
             if(isGranted) {
@@ -545,8 +496,6 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
     }
 
     fun dialogSaveBitmap(view: View) {
-        println("Save bitmap clicked.")
-//        checkPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, "External Storage", REQUEST_CODE_WRITE_EXTERNAL_STORAGE)
         activityResultLauncher.launch(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
     }
 

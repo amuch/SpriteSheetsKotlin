@@ -42,7 +42,7 @@ class DialogSettings(activity: Activity, database: Database): Dialog(activity), 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        setContentView(R.layout.dialog_settings)
+        setContentView(R.layout.dialog_settings_square)
 
         bindUI()
     }

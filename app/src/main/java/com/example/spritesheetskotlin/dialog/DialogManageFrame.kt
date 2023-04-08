@@ -4,7 +4,6 @@ import android.app.Dialog
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.Window
-import android.widget.Button
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -12,13 +11,10 @@ import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.DrawingViewModel
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.bitmap.BitmapManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.runBlocking
-import kotlin.concurrent.thread
 import kotlin.math.max
 
 const val IMAGE_BUTTON_DIALOG_FRAME_BASE = 2000
+const val FRAME_COUNT_MAX = 25
 
 class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager, drawingViewModel: DrawingViewModel): Dialog(activity)  {
     private var activity: DrawingActivity
@@ -30,11 +26,7 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
     private lateinit var imageViewDuplicate: ImageView
     private lateinit var linearLayoutDelete: LinearLayout
     private lateinit var imageViewDelete: ImageView
-//    private lateinit var buttonAdd: Button
-//    private lateinit var buttonDuplicate: Button
-//    private lateinit var buttonDelete: Button
     private lateinit var imageViewMainFrame: ImageView
-//    private lateinit var buttonAccept: Button
 
     init {
         setCancelable(false)
@@ -56,7 +48,7 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
         updateBitmap()
     }
 
-    fun updateBitmap() {
+    private fun updateBitmap() {
         imageViewMainFrame.setImageBitmap(this.drawingViewModel.bitmapMain.value)
         imageViewDuplicate.setImageBitmap(this.drawingViewModel.bitmapMain.value)
         imageViewDelete.setImageBitmap(this.drawingViewModel.bitmapMain.value)
@@ -79,23 +71,15 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
 
         linearLayoutAdd = findViewById(R.id.dialogManageFrameLinearLayoutAdd)
         linearLayoutAdd.setOnClickListener {
-            val spriteWidth = bitmapManager.bitmapList[0].width
-            val spriteHeight = bitmapManager.bitmapList[0].height
-            val bitmap = BitmapManager().createBitmap(spriteWidth, spriteHeight)
-            bitmapManager.bitmapList.add(bitmap)
-            displayFrames()
-            activity.displayFrames()
+            if(bitmapManager.bitmapList.size < FRAME_COUNT_MAX) {
+                val spriteWidth = bitmapManager.bitmapList[0].width
+                val spriteHeight = bitmapManager.bitmapList[0].height
+                val bitmap = BitmapManager().createBitmap(spriteWidth, spriteHeight)
+                bitmapManager.bitmapList.add(bitmap)
+                displayFrames()
+                activity.displayFrames()
+            }
         }
-
-//        buttonAdd = findViewById<Button>(R.id.dialogManageFrameButtonAdd)
-//        buttonAdd.setOnClickListener {
-//            val spriteWidth = bitmapManager.bitmapList[0].width
-//            val spriteHeight = bitmapManager.bitmapList[0].height
-//            val bitmap = BitmapManager().createBitmap(spriteWidth, spriteHeight)
-//            bitmapManager.bitmapList.add(bitmap)
-//            displayFrames()
-//            activity.displayFrames()
-//        }
 
         linearLayoutDuplicate = findViewById(R.id.dialogManageFrameLinearLayoutDuplicate)
         linearLayoutDuplicate.setOnClickListener {
@@ -105,16 +89,6 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
             displayFrames()
             activity.displayFrames()
         }
-
-
-//        buttonDuplicate = findViewById(R.id.dialogManageFrameButtonDuplicate)
-//        buttonDuplicate.setOnClickListener {
-//            val bitmapCurrent = bitmapManager.bitmapList[bitmapManager.indexCurrent]
-//            val bitmapDuplicate = bitmapCurrent.copy(bitmapCurrent.config, true)
-//            bitmapManager.bitmapList.add(bitmapDuplicate)
-//            displayFrames()
-//            activity.displayFrames()
-//        }
 
         linearLayoutDelete = findViewById(R.id.dialogManageFrameLinearLayoutDelete)
         linearLayoutDelete.setOnClickListener {
@@ -136,19 +110,6 @@ class DialogManageFrame(activity: DrawingActivity, bitmapManager: BitmapManager,
                 updateBitmap()
             }
         }
-
-
-//        buttonDelete = findViewById(R.id.dialogManageFrameButtonDelete)
-//        buttonDelete.setOnClickListener {
-//            if(bitmapManager.bitmapList.size > 1) {
-//                bitmapManager.bitmapList.removeAt(bitmapManager.indexCurrent)
-//                bitmapManager.indexCurrent = 0
-//                activity.setStorageBitmap(0)
-//                displayFrames()
-//                activity.displayFrames()
-//                updateBitmap()
-//            }
-//        }
 
         displayFrames()
     }

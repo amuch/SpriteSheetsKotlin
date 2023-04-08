@@ -2,27 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lightGray">
+    android:background="@color/lightGray" >
 
     <ImageView
         android:id="@+id/imageViewDimension"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
+        android:layout_above="@+id/spinner_image_dimension"
         android:gravity="center"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:src="@mipmap/dimension32"
-        android:layout_margin="10dp" />
+        android:layout_margin="20dp" />
 
     <Spinner
         android:id="@+id/spinner_image_dimension"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/imageViewDimension"
+        android:layout_marginStart="20dp"
+        android:layout_centerVertical="true"
         android:layout_alignParentStart="true"
         android:dropDownWidth="100dp"
         android:textAlignment="center"/>
@@ -31,25 +31,24 @@
         android:id="@+id/imageViewResolution"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentEnd="true"
+        android:layout_above="@+id/spinner_image_resolution"
         android:gravity="center"
         android:scaleType="fitCenter"
         android:adjustViewBounds="true"
         android:layout_gravity="center"
         android:src="@mipmap/resolution32"
-        android:layout_margin="10dp" />
+        android:layout_margin="20dp" />
 
     <Spinner
         android:id="@+id/spinner_image_resolution"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:layout_below="@+id/imageViewResolution"
-        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="20dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
         android:dropDownWidth="100dp"
         android:textAlignment="center"/>
-
 
     <ImageButton
         android:id="@+id/image_button_settings_confirm"
