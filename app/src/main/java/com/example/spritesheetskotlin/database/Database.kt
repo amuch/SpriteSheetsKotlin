@@ -1,19 +1,12 @@
 package com.example.spritesheetskotlin.database
 
-import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.graphics.Color
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
 import com.example.spritesheetskotlin.palette.DBColor
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 const val PALETTE_RAINBOW = "Rainbow"
 const val PALETTE_DEFAULT = "Rainbow Extended"
@@ -71,55 +64,14 @@ const val CREATE_PREFERENCE_TABLE =
 class Database(
     context: Context?,
 ) : SQLiteOpenHelper(context, NAME_DATABASE, null, VERSION_DATABASE) {
-    private val coroutineScopeMain = CoroutineScope(Dispatchers.Main)
 
-    companion object {
-//        const val DROP_TABLE = "DROP TABLE IF EXISTS "
-//        const val CREATE_TABLE = "CREATE TABLE IF NOT EXISTS "
-//
-//        const val NAME_PALETTE_TABLE = "TABLE_PALETTE"
-//        const val PRIMARY_KEY_PALETTE = "id_palette"
-//        const val INDEX_ID_PALETTE = 0
-//        const val NAME_PALETTE = "name_palette"
-//        const val INDEX_NAME_PALETTE = 1
-//        const val CREATE_TABLE_PALETTE =
-//            "$CREATE_TABLE $NAME_PALETTE_TABLE" +
-//            "($PRIMARY_KEY_PALETTE INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//            "$NAME_PALETTE VARCHAR(63) NOT NULL);"
-//
-//        const val NAME_COLOR_TABLE = "TABLE_COLOR"
-//        const val PRIMARY_KEY_COLOR = "id_color"
-//        const val INDEX_ID_COLOR = 0
-//        const val NAME_COLOR = "name_color"
-//        const val INDEX_NAME_COLOR = 1
-//        const val INT_COLOR = "int_color"
-//        const val INDEX_INT_COLOR = 2
-//
-//        const val INDEX_PALETTE_COLOR = 3
-//        const val CREATE_TABLE_COLOR =
-//            "$CREATE_TABLE $NAME_COLOR_TABLE" +
-//            "($PRIMARY_KEY_COLOR INTEGER PRIMARY KEY AUTOINCREMENT, " +
-//            "$NAME_COLOR VARCHAR(63), " +
-//            "$INT_COLOR INTEGER NOT NULL, " +
-//            "$PRIMARY_KEY_PALETTE INTEGER NOT NULL, " +
-//            "FOREIGN KEY ($PRIMARY_KEY_PALETTE)" +
-//            "REFERENCES $NAME_PALETTE_TABLE ($PRIMARY_KEY_PALETTE));"
-    }
 
     lateinit var database: SQLiteDatabase
-    init {
-        println("DB init.")
-
-    }
-
     var isCreating = false
 
     override fun onCreate(sqliteDatabase: SQLiteDatabase?) {
-        println("DB on Create.")
         isCreating = true
         database = sqliteDatabase!!
-//        clearTables(sqliteDatabase)
-
         createTables(sqliteDatabase)
     }
 
@@ -137,10 +89,6 @@ class Database(
         return super.getReadableDatabase()
     }
 
-//    private fun getDB() : SQLiteDatabase {
-//        return this.writableDatabase
-//    }
-
     override fun onUpgrade(sqliteDatabase: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         println("Database upgrade called.")
     }
@@ -149,20 +97,17 @@ class Database(
         sqliteDatabase!!.execSQL(CREATE_TABLE_PALETTE)
         sqliteDatabase.execSQL(CREATE_TABLE_COLOR)
         sqliteDatabase.execSQL(CREATE_PREFERENCE_TABLE)
-        println("Create tables called.")
 
 
         createPaletteRainbowExtended()
         populatePaletteRainbowExtended()
         isCreating = false
-//        sqliteDatabase.close()
     }
 
     private fun dropTables(sqliteDatabase: SQLiteDatabase?) {
         sqliteDatabase!!.execSQL("$DROP_TABLE $NAME_PREFERENCE_TABLE;")
         sqliteDatabase.execSQL("$DROP_TABLE $NAME_COLOR_TABLE;")
         sqliteDatabase.execSQL("$DROP_TABLE $NAME_PALETTE_TABLE;")
-//        sqliteDatabase.close()
     }
 
     fun clearTables(sqliteDatabase: SQLiteDatabase?) {
@@ -205,8 +150,6 @@ class Database(
             return result
         }
 
-
-
         cursor.close()
         println("No Preference")
         return noPreference
@@ -244,7 +187,6 @@ class Database(
 
         val database = writableDatabase
         database.insert(NAME_PALETTE_TABLE, null, contentValues)
-//        sqliteDatabase.close()
         println("Added $name to the database.")
         return "Added $name to the database."
     }
@@ -263,7 +205,6 @@ class Database(
             dbPalette.name = name
         }
         cursor.close()
-//        sqliteDatabase.close()
         return dbPalette
     }
 
@@ -281,7 +222,6 @@ class Database(
             dbPalette.name = namePalette
         }
         cursor.close()
-//        sqliteDatabase.close()
         return dbPalette
     }
 
@@ -299,7 +239,6 @@ class Database(
             }
         }
         cursor.close()
-        //sqliteDatabase.close()
         return dbPalettes
     }
 
@@ -322,7 +261,6 @@ class Database(
 
         val database = writableDatabase
         database.update(NAME_PALETTE_TABLE, contentValues, "$PRIMARY_KEY_PALETTE = $id", null)
-//        sqliteDatabase.close()
 
         return "Set ${dbPalette.name} to $name in the database."
     }
@@ -336,7 +274,6 @@ class Database(
         val query = "DELETE FROM $NAME_PALETTE_TABLE WHERE $PRIMARY_KEY_PALETTE = $id"
         val database = writableDatabase
         database.execSQL(query)
-//        sqliteDatabase.close()
 
         return "Deleted ${dbPalette.name} from the database."
     }
@@ -374,7 +311,6 @@ class Database(
 
         val database = writableDatabase
         database.insert(NAME_COLOR_TABLE, null, contentValues)
-//        sqliteDatabase.close()
         println("Added $name ($color) to ${dbPalette.name} in the database.")
         return "Added $name ($color) to ${dbPalette.name} in the database."
     }
@@ -396,7 +332,6 @@ class Database(
 
         val database = writableDatabase
         database.insert(NAME_COLOR_TABLE, null, contentValues)
-//        sqliteDatabase.close()
 
         return "Added ${dbColor.color} to ${dbPalette.name} in the database."
     }
@@ -417,7 +352,7 @@ class Database(
             }
         }
         cursor.close()
-//        sqliteDatabase.close()
+
         return dbColors
     }
 
@@ -462,7 +397,6 @@ class Database(
 
         val database = writableDatabase
         database.update(NAME_COLOR_TABLE, contentValues, "$PRIMARY_KEY_COLOR = ${colorToUpdate.id}", null)
-//        sqliteDatabase.close()
 
         println("Set ${colorToUpdate.name} to $name in the database.")
         return "Set ${colorToUpdate.name} to $name in the database."
@@ -520,6 +454,7 @@ class Database(
     private fun isUnique(value: Long, list: ArrayList<Long> ) : Boolean {
         for(i in 0 until list.size) {
             if(0 == value.compareTo(list[i])) {
+                println("Found Match: ${list[i]}")
                 return false
             }
         }
@@ -588,24 +523,24 @@ class Database(
     private fun populatePaletteRainbowExtended() {
         val palette = readPalette(PALETTE_DEFAULT)
 
-        createColor("White", 0xFFFFFFFF, palette.id)
-        createColor("Black", 0xFF000000, palette.id)
-        createColor("Dark Gray", 0xFF444444, palette.id)
-        createColor("Silver", 0xFF9897A9, palette.id)
-        createColor("Pink", 0xFFFF69B4, palette.id)
-        createColor("Red", 0xFFFF0000, palette.id)
-        createColor("Maroon", 0xFF5F0000, palette.id)
-        createColor("Orange", 0xFFFFA500, palette.id)
-        createColor("Yellow", 0xFFFFFF00, palette.id)
-        createColor("Green", 0xFF00FF00, palette.id)
-        createColor("Hunter Green", 0xFF003314, palette.id)
-        createColor("Blue", 0xFF0000FF, palette.id)
-        createColor("Sky Blue", 0xFF87CEEB, palette.id)
-        createColor("Purple", 0xFF800080, palette.id)
-        createColor("Brown", 0xFF8B4513, palette.id)
-        createColor("Tan", 0xFFCDA789, palette.id)
-        createColor("Gold", 0xFFFFD868, palette.id)
-        createColor("Light Gray", 0xFFCCCCCC, palette.id)
-        createColor("White", 0xFFFFFFFF, palette.id)
+        createColor("White", -1, palette.id)
+        createColor("Black", -16777216, palette.id)
+        createColor("Dark Gray",  -12303292, palette.id)
+        createColor("Silver", -6776919, palette.id)
+        createColor("Pink", -38476, palette.id)
+        createColor("Red", -65536, palette.id)
+        createColor("Maroon", -10551296, palette.id)
+        createColor("Orange", -23296, palette.id)
+        createColor("Yellow", -256, palette.id)
+        createColor("Green", -16711936, palette.id)
+        createColor("Hunter Green", -16764140, palette.id)
+        createColor("Blue",  -16776961, palette.id)
+        createColor("Sky Blue", -7876885, palette.id)
+        createColor("Purple", -8388480, palette.id)
+        createColor("Brown", -7650029, palette.id)
+        createColor("Tan", -3299447, palette.id)
+        createColor("Gold", -10136, palette.id)
+        createColor("Light Gray", -3355444, palette.id)
+        createColor("White", -1, palette.id)
     }
 }

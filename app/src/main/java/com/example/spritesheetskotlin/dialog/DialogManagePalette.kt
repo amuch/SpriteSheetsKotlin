@@ -5,10 +5,6 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Window
 import android.widget.*
-import androidx.core.graphics.blue
-import androidx.core.graphics.green
-import androidx.core.graphics.red
-import androidx.core.graphics.toColorInt
 import com.example.spritesheetskotlin.DrawingActivity
 import com.example.spritesheetskotlin.R
 import com.example.spritesheetskotlin.palette.Palette
@@ -44,7 +40,6 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
             this.red = Palette().colorInt(this.colorToUpdate!!)
             this.green = Palette().colorInt(this.colorToUpdate!!)
             this.blue = Palette().colorInt(this.colorToUpdate!!)
-            println("$red $green $blue")
         }
         activity.also { this.activity = it }
     }
@@ -60,10 +55,11 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
     override fun show() {
         super.show()
         this.colorToUpdate = paletteViewModel.currentColor.value
-        this.red = Palette().colorInt(this.colorToUpdate!!)
-        this.green = Palette().colorInt(this.colorToUpdate!!)
-        this.blue = Palette().colorInt(this.colorToUpdate!!)
-        println("Show")
+
+        this.red = this.colorToUpdate?.shr(16)?.and(0xFF)!!.toInt()
+        this.green = this.colorToUpdate?.shr(8)?.and(0xFF)!!.toInt()
+        this.blue = this.colorToUpdate?.and(0xFF)!!.toInt()
+        setDynamicUIElements()
     }
     private fun textFromComponents(redComponent : Int, greenComponent: Int, blueComponent:Int) : Int {
         if((redComponent + greenComponent + blueComponent) < (127 * 3)) {
@@ -78,22 +74,10 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
     }
 
     private fun setUpdateButtonColor() {
-        val redSelected = colorToUpdate?.shr(16)?.and(0xFF)
-        val greenSelected = colorToUpdate?.shr(8)?.and(0xFF)
-        val blueSelected = colorToUpdate?.and(0xFF)
-
-        val textColor = textFromComponents(redSelected!!.toInt(), greenSelected!!.toInt(), blueSelected!!.toInt() )
-
         imageViewUpdateBegin.setBackgroundColor(colorToUpdate!!.toInt())
     }
 
     private fun setDeleteButtonColor() {
-        val redSelected = colorToUpdate?.shr(16)?.and(0xFF)
-        val greenSelected = colorToUpdate?.shr(8)?.and(0xFF)
-        val blueSelected = colorToUpdate?.and(0xFF)
-
-        val textColor = textFromComponents(redSelected!!.toInt(), greenSelected!!.toInt(), blueSelected!!.toInt() )
-
         imageViewDelete.setBackgroundColor(colorToUpdate!!.toInt())
     }
 
@@ -115,6 +99,7 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
         }
         setTextViewRGB()
         setTextViewHex()
+        setSeekBarProgress()
     }
 
     private fun bindUI() {
@@ -136,12 +121,14 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
             if(null != this.colorToUpdate) {
                 val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
 
-                val color = Color.argb(0xFF, red, green, blue)
-                DrawingActivity.database.updateColor(dbPalette.id, colorToUpdate!!, color.toLong())
-                paletteViewModel.palette.value!!.updateColor(this.colorToUpdate!!, color.toLong())
+                val color = Color.argb(0xFF, red, green, blue).toLong()
+                DrawingActivity.database.updateColor(dbPalette.id, colorToUpdate!!, color)
+                paletteViewModel.palette.value!!.updateColor(this.colorToUpdate!!, color)
+
+                paletteViewModel.currentColor.value = color
+                activity.setButtonImage()
                 activity.displayPalette()
                 displayPalette()
-
             }
 
             this.cancel()
@@ -152,10 +139,13 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
 
             val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
 
-            val color = Color.argb(0xFF, red, green, blue)
-            if(!DrawingActivity.database.colorIsInPalette(color.toLong(), dbPalette.id)) {
-                DrawingActivity.database.createColor(name, color.toLong(), dbPalette.id)
-                paletteViewModel.palette.value!!.addColor(color.toLong())
+            val color = Color.argb(0xFF, red, green, blue).toLong()
+            if(!DrawingActivity.database.colorIsInPalette(color, dbPalette.id)) {
+                DrawingActivity.database.createColor(name, color, dbPalette.id)
+                paletteViewModel.palette.value!!.addColor(color)
+
+                paletteViewModel.currentColor.value = color
+                activity.setButtonImage()
                 activity.displayPalette()
                 displayPalette()
             }
@@ -170,6 +160,9 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
                     val dbPalette = DrawingActivity.database.readPalette(DrawingActivity.namePalette)
                     DrawingActivity.database.deleteColor(dbPalette.id, colorToUpdate!!)
                     paletteViewModel.palette.value!!.deleteColor(this.colorToUpdate!!)
+                    if(this.colorToUpdate!! == paletteViewModel.currentColor.value) {
+                        paletteViewModel.currentColor.value = paletteViewModel.palette.value!!.getColorByIndex(0)
+                    }
                     activity.displayPalette()
                     displayPalette()
                 }
@@ -179,7 +172,6 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
         }
 
         seekBarRed = findViewById(R.id.seekBarRed)
-//        seekBarRed.progress = this.red
         seekBarRed.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 red = progress
@@ -189,7 +181,6 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarGreen = findViewById(R.id.seekBarGreen)
-//        seekBarGreen.progress = this.green
         seekBarGreen.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 green = progress
@@ -199,7 +190,6 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
             override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
         seekBarBlue = findViewById(R.id.seekBarBlue)
-//        seekBarBlue.progress = this.blue
         seekBarBlue.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, p2: Boolean) {
                 blue = progress
@@ -226,13 +216,18 @@ class DialogManagePalette(activity: DrawingActivity, paletteViewModel: PaletteVi
 
     private val paletteButtonAction : (Long) -> Unit = {
         red = Color.red(Palette().colorInt(it))
-        seekBarRed.progress = red
         green = Color.green(Palette().colorInt(it))
-        seekBarGreen.progress = green
         blue = Color.blue(Palette().colorInt(it))
-        seekBarBlue.progress = blue
 
         colorToUpdate = it
+        paletteViewModel.currentColor.value = it
+        activity.setButtonImage()
         setDynamicUIElements()
+    }
+
+    private fun setSeekBarProgress() {
+        seekBarRed.progress = red ?: 0
+        seekBarGreen.progress = green ?: 0
+        seekBarBlue.progress = blue ?: 0
     }
 }

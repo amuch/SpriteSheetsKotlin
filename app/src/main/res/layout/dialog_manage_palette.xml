@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@color/lightGray">
 
     <HorizontalScrollView
         android:layout_width="match_parent"
@@ -26,154 +26,9 @@
         android:layout_weight="2"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/redTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="@color/red"
-            android:text="@string/red"/>
-        <SeekBar
-            android:id="@+id/seekBarRed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="12dp"
-            android:padding="3dp"
-            android:minHeight="20dp"
-            android:maxHeight="40dp"
-            android:max="255"
-            android:progressTint="@color/red"
-            android:thumbTint="@color/red"
-            android:background="@color/darkGray">
-
-        </SeekBar>
-
-        <TextView
-            android:id="@+id/greenTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="@color/green"
-            android:text="@string/green"/>
-        <SeekBar
-            android:id="@+id/seekBarGreen"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="12dp"
-            android:padding="3dp"
-            android:minHeight="20dp"
-            android:maxHeight="40dp"
-            android:max="255"
-            android:progressTint="@color/green"
-            android:thumbTint="@color/green"
-            android:background="@color/darkGray">
-
-        </SeekBar>
-
-        <TextView
-            android:id="@+id/blueTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="20sp"
-            android:textColor="@color/blue"
-            android:text="@string/blue"/>
-        <SeekBar
-            android:id="@+id/seekBarBlue"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_margin="12dp"
-            android:padding="3dp"
-            android:minHeight="20dp"
-            android:maxHeight="40dp"
-            android:max="255"
-            android:progressTint="@color/blue"
-            android:thumbTint="@color/blue"
-            android:background="@color/darkGray">
-
-        </SeekBar>
+        <include layout="@layout/view_manage_palette_seekbars" />
 
     </LinearLayout>
-
-<!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_weight="2" >-->
-
-
-
-<!--        <TextView-->
-<!--            android:id="@+id/textViewDialogColorRGB"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:gravity="center"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            android:layout_alignParentTop="true"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:text="@string/color_string_default"/>-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/textViewDialogColorHex"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="10dp"-->
-<!--            android:gravity="center"-->
-<!--            android:layout_centerHorizontal="true"-->
-<!--            android:layout_below="@+id/textViewDialogColorRGB"-->
-<!--            android:textSize="20sp"-->
-<!--            android:textColor="@color/black"-->
-<!--            android:text="@string/hex_string_default"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManagePaletteButtonAccept"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:text="@string/accept">-->
-
-<!--        </Button>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManagePaletteButtonUpdate"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:layout_alignParentStart="true"-->
-<!--            android:layout_centerVertical="true"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:text="@string/update">-->
-
-<!--        </Button>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManagePaletteButtonDelete"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_alignParentStart="true"-->
-<!--            android:text="@string/delete"/>-->
-
-<!--        <Button-->
-<!--            android:id="@+id/dialogManagePaletteButtonClose"-->
-<!--            android:layout_width="100dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="20dp"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_alignParentEnd="true"-->
-<!--            android:text="@string/close"/>-->
-
-<!--    </RelativeLayout>-->
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -184,4 +39,5 @@
         <include layout="@layout/view_manage_palette_buttons" />
 
     </LinearLayout>
+
 </LinearLayout>

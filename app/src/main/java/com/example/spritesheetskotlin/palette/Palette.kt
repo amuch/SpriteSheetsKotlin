@@ -51,7 +51,7 @@ class Palette(var dbColorList: ArrayList<DBColor>) {
         val bitmap: Bitmap = BitmapFactory.decodeResource(
             resources,
 //            if((red + green + blue) < (127 * 3)) R.mipmap.palette_white_full else R.mipmap.palette_black_full
-        R.mipmap.palette_colors
+        R.mipmap.palette32
         )
         imageButton.setImageBitmap(bitmap)
     }

@@ -90,7 +90,7 @@ class DialogSaveBitmap(activity: DrawingActivity, drawingViewModel: DrawingViewM
             exception.printStackTrace()
         }
 
-        Toast.makeText(activity.applicationContext, "Saved $fileName", Toast.LENGTH_LONG).show()
+        Toast.makeText(activity.applicationContext, "Saved image as $fileName", Toast.LENGTH_LONG).show()
     }
 
     private fun bindUI() {

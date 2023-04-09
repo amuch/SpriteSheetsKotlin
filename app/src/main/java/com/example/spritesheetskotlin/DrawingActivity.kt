@@ -412,7 +412,7 @@ class DrawingActivity : AppCompatActivity(), View.OnTouchListener {
         return drawingViewModel.bitmapManager.value!!
     }
 
-    private fun setButtonImage() {
+    fun setButtonImage() {
 //        val buttonBitmapActionBlend = findViewById<Button>(R.id.buttonBitmapActionBlend)
 //        buttonBitmapActionBlend.setBackgroundColor(COLOR_BUTTON_INACTIVE)
 
